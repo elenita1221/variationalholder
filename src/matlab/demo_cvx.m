@@ -43,11 +43,17 @@ for iter = 1:10
     
     cvx_begin
     variable tau_2(N)
-    minimize(  0.5*sum((tau_2.^2).*inv_pos(tau_1)) ...
-        + inv_alpha_1*sum(log_normcdf(tau_2.*inv_pos(sqrt(inv_alpha_1*tau_1)))) ...
-        + 0.5*matrix_frac(tau_2-b, A-diag(tau_1)) )
+    % cvx raises error due to log_normcdf being concave
+         minimize(  0.5*sum((tau_2.^2).*inv_pos(tau_1)) ...
+             + inv_alpha_1*sum(log_normcdf(tau_2.*inv_pos(sqrt(inv_alpha_1*tau_1)))) ...
+             + 0.5*matrix_frac(tau_2-b, A-diag(tau_1)) )
+    % guillaume's approximation
+    % TODO
     cvx_end
     
+    %     x = -40:.01:20;
+    %     plot(x,log_normcdf(x) + x.^2/2,'r',x,max(0,x-1).^2/2+x-1,'b',x,-1-log(log(1+exp(-x))),'g')
+    %     const_1 =
     
     % % optimize alpha_1
     
