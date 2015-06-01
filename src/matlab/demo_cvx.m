@@ -51,9 +51,9 @@ for iter = 1:10
     % TODO
     cvx_end
     
-    %     x = -40:.01:20;
-    %     plot(x,log_normcdf(x) + x.^2/2,'r',x,max(0,x-1).^2/2+x-1,'b',x,-1-log(log(1+exp(-x))),'g')
-    %     const_1 =
+    %  x = -40:.01:20;
+    %     plot(x,log_normcdf(x) + x.^2/2,'r',x,max(0,x-1).^2/2+x-1,'b',x,-1-log(log(1+exp(-x))),'g', x, x.^2/2-(log(1+exp(0.88-x))/1.5).^2, 'k')
+       
     
     % % optimize alpha_1
     
