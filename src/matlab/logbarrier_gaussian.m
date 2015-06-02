@@ -22,7 +22,3 @@ end
 f = -sum(log(ev));
 g =  diag(inv(M));
 g = g(:);
-
-
-
-

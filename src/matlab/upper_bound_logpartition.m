@@ -1,12 +1,10 @@
-function [logIbar,logIbar_grad,logIfg] = upper_bound_logpartition(fg,theta,rho,delta)
+function [logIbar,logIbar_grad,logIfg] = upper_bound_logpartition(params,theta,rho)
 
-if nargin<4
-    delta = 1;
-end
 logIfg = [0 0];
-[logIfg(1),logIf_grad] = factor_scaled_integral_univ(fg{1},theta,rho,delta);
-[logIfg(2),logIg_grad] = factor_scaled_integral_gauss(fg{2},theta,1-rho,-delta);
+%[a,b] = factor_scaled_integral_univ(fg{1},theta,rho,delta);
+[logIfg(1),logIf_grad] = factor_scaled_integral_orthant(theta,rho);
+[logIfg(2),logIg_grad] = factor_scaled_integral_gauss(params,-theta,1-rho);
 logIfg = real(logIfg);
 
 logIbar = sum(logIfg);
-logIbar_grad = logIf_grad + logIg_grad;
+logIbar_grad = logIf_grad - logIg_grad;
