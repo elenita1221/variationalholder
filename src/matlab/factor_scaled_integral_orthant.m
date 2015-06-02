@@ -3,7 +3,7 @@ function [I,I_grad] = factor_scaled_integral_orthant(theta,invalpha)
 % Integral of a diagonal covariance Gaussian restricted to the positive orthant
 
 sz = size(theta);
-if any(theta<=0)
+if any(theta(:,1)<=0)
     I = Inf;
     I_grad = inf * ones(sz);
     return
@@ -12,7 +12,8 @@ end
 theta = reshape(theta,[],2);
 d = size(theta,1);
 c = theta(:,2).^2 ./ theta(:,1) / invalpha;
-sc = sqrt(c);
+sc = sqrt(c) .* sign(theta(:,2));
+%sc = theta(:,2) ./ sqrt(theta(:,1)) / sqrt(invalpha)
 
 [logphi, dlogphi] = lognormcdf(sc);
 I = invalpha * ( .5*d*log(2*pi*invalpha) ...
