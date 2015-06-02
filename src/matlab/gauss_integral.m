@@ -1,11 +1,25 @@
 function [J,Jgrad] = gauss_integral(A,b)
+% gauss_integral - unnormalized Gaussian integral
+% gauss_integral(A,b) computes the integral of
+%
+% exp(-.5*t*A*t' + b'*t)
+%
+% [f,g] = gauss_integral(A,b)
+% g{1} returns the gradients with respect to the diagonal entries of A
+% g{2} returns the gradients with respect to b
 
-detA = det(A);
-if detA<eps
+[eigvec, eigv] = eig(A);
+eigv = diag(eigv);
+if any(eigv<eps)
     J = inf;
-    Jgrad = inf;
+    Jgrad = {inf*ones(size(A)), inf*ones(size(b))};
 else
     d = size(A,1);
-    J = d/2*log(2*pi) - .5*log(detA) + .5*b'*(A\b);
-    Jgrad = 0;
+    Ainvb = A\b;
+    J = d/2*log(2*pi) - .5*sum(log(eigv)) + .5*b'*Ainvb;
+    if nargout>1
+%        Jgrad = {diag(-.5 * inv(A) - .5 * Ainvb*Ainvb'), Ainvb};
+        %eigvec
+        Jgrad = {-.5 * ((eigvec.^2)*(1./eigv) + Ainvb.^2), Ainvb};
+    end
 end

@@ -1,11 +1,14 @@
-function [I,I_grad] = factor_scaled_integral_gauss(params,theta,prop,delta)
+function [I,I_grad] = factor_scaled_integral_gauss(params,theta,prop)
 
 
 d = size(params.A,1);
 
-I = prop * gauss_integral(...
-    params.A/prop + delta*diag(theta(1:d))/prop,...
-    params.b/prop + delta*theta(d+1:end)/prop...
+[f,g] = gauss_integral(...
+    params.A/prop + diag(theta(1:d))/prop,...
+    params.b/prop + theta(d+1:end)/prop...
     );
 
-I_grad = 0;
+I = prop * f;
+I_grad_A = g{1};
+I_grad_b = g{2};
+I_grad = [I_grad_A; I_grad_b];
