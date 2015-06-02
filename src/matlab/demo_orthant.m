@@ -82,13 +82,13 @@ for k=1:K % loop over 3 experiments
     %% checks that the VH bound is an upper bound
     rho0 = .5; % rho = 1/alpha_1 = 1 - 1/alpha_2
     theta0 = [diag(A)*.1;b/2];
-    UB0 = upper_bound_logpartition(fg,theta0,rho0);
+    UB0 = upper_bound_logpartition(params,theta0,rho0);
     fprintf('The exact integral is %4.3f\n', Istar)
     fprintf('The variational holder bound gives %4.3f for the initial pivot function with parameters %s', UB0, num2str(theta0))
     
     res0 = [theta0;logodd(rho0)];
     
-    objfun = @(t) upper_bound_logpartition(fg,t(1:end-1),sigmoid(t(end)));
+    objfun = @(t) upper_bound_logpartition(params,t(1:end-1),sigmoid(t(end)));
     
     [res1,UBopt1] = fminunc(objfun,res0,optimset('Display','iter','MaxFunEvals',10000,'TolX',1e-7));
     %     [res2,UBopt2] = fminunc(objfun,-res0,optimset('Display','iter','MaxFunEvals',1000));
@@ -97,7 +97,7 @@ for k=1:K % loop over 3 experiments
     
     theta1 = res1(1:end-1)
     rho1 = sigmoid(res1(end))
-    [UB1,~,IfIg] = upper_bound_logpartition(fg,theta1,rho1);
+    [UB1,~,IfIg] = upper_bound_logpartition(params,theta1,rho1);
     
     
 %    I_fr = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
