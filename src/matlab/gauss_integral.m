@@ -12,7 +12,7 @@ function [J,Jgrad] = gauss_integral(A,b)
 eigv = diag(eigv);
 if any(eigv<eps)
     J = inf;
-    Jgrad = {inf*ones(size(A)), inf*ones(size(b))};
+    Jgrad = {inf*ones(length(A),1), inf*ones(size(b))};
 else
     d = size(A,1);
     Ainvb = A\b;

@@ -120,7 +120,7 @@ for k=1:K % loop over 3 experiments
     % if only the diagonal elements of A are used
     IDiago = factor_scaled_integral_univ({log_step_func, log_step_func},[diag(params.A);params.b],1-ep,1/ep);
     % if we remove the truncation
-    IGauss = factor_scaled_integral_gauss(params,zeros(d*2,1),1-ep,1/ep);
+    IGauss = factor_scaled_integral_gauss(params,zeros(d*2,1),1-ep);
     
     % truncated gaussian with diagonal covariance
     Ifr = factor_scaled_integral_univ({log_step_func, log_step_func},theta1,1-ep,1/ep);
@@ -129,7 +129,7 @@ for k=1:K % loop over 3 experiments
     params_gr.A = params.A + diag(theta1(1:d));
     params_gr.b = params.b + theta1(d+1:end)
     
-    Igr = factor_scaled_integral_gauss(params_gr,zeros(d*2,1),1-ep,1/ep);
+    Igr = factor_scaled_integral_gauss(params_gr,zeros(d*2,1),1-ep);
     
     UB1
     [Istar IDiago IGauss UB0 UB1 Ifr Igr]
