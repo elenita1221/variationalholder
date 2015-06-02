@@ -43,9 +43,7 @@ for iter = 1:10
     
     cvx_begin
     variable tau_2(N)
-    minimize(  0.5*sum((tau_2.^2).*inv_pos(tau_1)) ...
-        + inv_alpha_1*sum(log_normcdf(tau_2.*inv_pos(sqrt(inv_alpha_1*tau_1)))) ...
-        + 0.5*matrix_frac(tau_2-b, A-diag(tau_1)) )
+    minimize(  inv_alpha_1*sum(log_normcdf(tau_2.*inv_pos(sqrt(inv_alpha_1*tau_1)))))
     cvx_end
     
     
