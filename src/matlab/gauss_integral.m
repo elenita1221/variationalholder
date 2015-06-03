@@ -12,7 +12,7 @@ function [J,Jgrad] = gauss_integral(A,b)
 eigv = diag(eigv);
 if any(eigv<eps)
     J = inf;
-    Jgrad = {inf*ones(length(A),1), inf*ones(size(b))};
+    Jgrad = {nan*ones(size(A)), nan*ones(size(b))};
 else
     d = size(A,1);
     Ainvb = A\b;
@@ -20,6 +20,6 @@ else
     if nargout>1
 %        Jgrad = {diag(-.5 * inv(A) - .5 * Ainvb*Ainvb'), Ainvb};
         %eigvec
-        Jgrad = {-.5 * ((eigvec.^2)*(1./eigv) + Ainvb.^2), Ainvb};
+        Jgrad = {-.5 * (eigvec * diag(1./eigv) * eigvec' + Ainvb * Ainvb'), Ainvb};
     end
 end
