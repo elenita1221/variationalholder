@@ -4,7 +4,7 @@ function [I,I_grad] = factor_scaled_integral_orthant(theta,rho)
 
 if nargin<=1
     grad_rho = 1;
-    rho = theta(end);
+    [rho,drho] = sigmoid(theta(end));
     theta = theta(1:end-1);
 else
     grad_rho = 0;
@@ -49,6 +49,6 @@ if nargout>1
         dlogphi_drho = dlogphi .* dsc_drho;
         I_grad_rho = unscaledI + rho * ...
             (.5 * d / rho + sum(dlogphi_drho) + .5*sum(dc_drho));
-        I_grad = [I_grad;I_grad_rho];
+        I_grad = [I_grad;drho * I_grad_rho];
     end
 end

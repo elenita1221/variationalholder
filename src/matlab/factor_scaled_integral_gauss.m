@@ -2,11 +2,11 @@ function [I,I_grad] = factor_scaled_integral_gauss(params,theta,prop)
 
 
 if nargin<=2
-    grad_rho = 1;
-    prop = theta(end);
+    grad_prop = 1;
+    [prop,dprop] = sigmoid(theta(end));
     theta = theta(1:end-1);
 else
-    grad_rho = 0;
+    grad_prop = 0;
 end
 
     
@@ -22,8 +22,7 @@ bm = params.b + theta(d+1:end);
 I_grad = [diag(gCell{1}); gCell{2}];
 I = prop * f;
 
-Am
-gCell{:}
-if grad_rho
-    I_grad = [I_grad; f - (sum(sum(gCell{1}.*Am)) + gCell{2}'*bm) / prop];
+if grad_prop
+    I_grad_prop = dprop * (f - (sum(sum(gCell{1}.*Am)) + gCell{2}'*bm) / prop);
+    I_grad = [I_grad; I_grad_prop];
 end

@@ -22,13 +22,12 @@ f = @(thet) factor_scaled_integral_orthant(thet);
 checkderivatives(f, [theta; rho])
 
 %% the Gaussian integral and its derivatives
-theta = [1 2 3 4 5 6]'*0.0;
-params.A = eye(3);%[1 .1 .3;.1 2 .5;.3 .5 2];
-params.b = [1 2 3]';
-rho = 1;
+theta = [1 2 3 4 5 6]'*0.1;
+params.A = [1 .1 .3;.1 2 .5;.3 .5 2];
+params.b = [1 2 3]'*0.1;
+rho = 2;
 checkderivatives(@(t) factor_scaled_integral_gauss(params, t), [theta;rho]);
-ddd
 
 %% checks the derivatives of the full function
-checkderivatives(@(t) upper_bound_logpartition(params,t,invalpha), theta);
+checkderivatives(@(t) upper_bound_logpartition(params,t), [theta;rho]);
 

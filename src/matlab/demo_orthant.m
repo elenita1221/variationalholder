@@ -80,33 +80,25 @@ for k=1:K % loop over 3 experiments
     mystar = exp(-Istar)*integral2(@(x,y) y.*reshape(exp(log_f([x(:) y(:)])+log_g([x(:) y(:)])),size(x)),-inf,inf,-inf,inf);
     
     %% checks that the VH bound is an upper bound
-    rho0 = .5; % rho = 1/alpha_1 = 1 - 1/alpha_2
     theta0 = [diag(A)*.1;b/2];
-    UB0 = upper_bound_logpartition(params,theta0,rho0);
+    UB0 = upper_bound_logpartition(params,[theta0;0]);
     fprintf('The exact integral is %4.3f\n', Istar)
     fprintf('The variational holder bound gives %4.3f for the initial pivot function with parameters %s', UB0, num2str(theta0))
     
-   % res0 = [theta0;logodd(rho0)];
-    res0 = [theta0];
+    res0 = [theta0;logodd(.5)];
+    %res0 = [theta0];
      
     %objfun = @(t) upper_bound_logpartition(params,t(1:end-1),sigmoid(t(end)));
-    objfun = @(t) upper_bound_logpartition(params,t,.6);
+    objfun = @(t) upper_bound_logpartition(params,t);
     
     [res1,UBopt1] = fminunc(objfun,res0,optimset('Display','iter','MaxFunEvals',10000,'TolX',1e-7));
-    %     [res2,UBopt2] = fminunc(objfun,-res0,optimset('Display','iter','MaxFunEvals',1000));
-    %     [res1,res2]
-    %     [UBopt1,UBopt2]
     
-%    theta1 = res1(1:end-1)
-    theta1 = res1
-    %    rho1 = sigmoid(res1(end))
-    rho1 = .6;
-    [UB1,~,~,IfIg] = upper_bound_logpartition(params,theta1,rho1);
-    IfIg
-    UB1
+   [UB1,~,IfIg] = upper_bound_logpartition(params,res1);
     
+   rho1 = sigmoid(res1(end)); %the first coefficient
+   theta1=res1(1:end-1);
     
-%    I_fr = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
+%   I_fr = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
     I_fr = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
     mx_fr = 1/I_fr*integral2(@(x,y) x.*reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
     my_fr = 1/I_fr*integral2(@(x,y) y.*reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
