@@ -1,14 +1,29 @@
 function [I,I_grad] = factor_scaled_integral_gauss(params,theta,prop)
 
 
-d = size(params.A,1);
+if nargin<=2
+    grad_rho = 1;
+    prop = theta(end);
+    theta = theta(1:end-1);
+else
+    grad_rho = 0;
+end
 
-[f,g] = gauss_integral(...
-    params.A/prop + diag(theta(1:d))/prop,...
-    params.b/prop + theta(d+1:end)/prop...
+    
+    
+d = size(params.A,1);
+Am = params.A + diag(theta(1:d));
+bm = params.b + theta(d+1:end);
+[f,gCell] = gauss_integral(...
+    Am/prop,...
+    bm/prop...
     );
 
+I_grad = [diag(gCell{1}); gCell{2}];
 I = prop * f;
-I_grad_A = g{1};
-I_grad_b = g{2};
-I_grad = [I_grad_A; I_grad_b];
+
+Am
+gCell{:}
+if grad_rho
+    I_grad = [I_grad; f - (sum(sum(gCell{1}.*Am)) + gCell{2}'*bm) / prop];
+end

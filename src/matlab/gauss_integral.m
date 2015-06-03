@@ -8,8 +8,8 @@ function [J,Jgrad] = gauss_integral(A,b)
 % g{1} returns the gradients with respect to the diagonal entries of A
 % g{2} returns the gradients with respect to b
 
-[eigvec, eigv] = eig(A);
-eigv = diag(eigv);
+[eigvec, Deigv] = eig(A);
+eigv = diag(Deigv);
 if any(eigv<eps)
     J = inf;
     Jgrad = {inf*ones(length(A),1), inf*ones(size(b))};
@@ -20,6 +20,6 @@ else
     if nargout>1
 %        Jgrad = {diag(-.5 * inv(A) - .5 * Ainvb*Ainvb'), Ainvb};
         %eigvec
-        Jgrad = {-.5 * ((eigvec.^2)*(1./eigv) + Ainvb.^2), Ainvb};
+        Jgrad = {-.5 * (eigvec * diag(1/eigv) * eigvec' + Ainvb * Ainvb'); Ainvb};
     end
 end
