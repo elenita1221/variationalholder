@@ -135,7 +135,7 @@ for k=1:K % loop over 3 experiments
     
     % VB
     
-    use_simple_vb = 1;
+    use_simple_vb = 0;
     if use_simple_vb
         objfun_vb = @(t) negative_lower_bound_logpartition_simplevb(params,t);
     else
