@@ -678,16 +678,16 @@ L := \sum_{i=1}^n \E{q}{\log f_i(t_i)}
 \end{align}
 We choose the variational distribution $q$ to be a product of univariate truncated normal distributions which are truncated at zero. Let $q=\prod_i \truncnormdist(\mu_i, \sigma_i)$. The variational bound is given by
 \begin{align}{
-L &=  -\frac{1}{2}\trace(A \E{q}{\t\t\transp}) + \bm b\transp \E{q}{\t}  +\frac{n}{2}\log(2\pi)  +\frac{1}{2}\sum_i\Bigl( \log(\sigma_i) +\sigma_i^2 - \frac{\mu_i \sigma_i}{ \sqrt{2\pi} \Phi(\frac{\mu_i}{\sigma_i}) } \exp(-\frac{1}{2}\frac{\mu_i^2}{\sigma_i^2}) \Bigr) \\
+L &=  -\frac{1}{2}\trace(A \E{q}{\t\t\transp}) + \bm b\transp \E{q}{\t}  +\frac{n}{2}\log(2\pi e)  +\frac{1}{2}\sum_i\Bigl( \log\bigl(\sigma_i \Phi(\frac{\mu_i}{\sigma_i})\bigr) - \frac{\mu_i}{ \sqrt{2\pi} \sigma_i \Phi(\frac{\mu_i}{\sigma_i}) } \exp(-\frac{1}{2}\frac{\mu_i^2}{\sigma_i^2}) \Bigr), \nonumber\\
 %elbo = -0.5*trace(params.A * E_tt) + params.b'*E_t +0.5*n*log(2*pi) +0.5*sum(log(sigma)) ...
 %    +0.5*sum( sigma.^2 - mu .* sigma / sqrt(2*pi) .* exp(-0.5*(mu_over_sigma2)) ./ normcdf_mu_over_sigma);
 %mu_over_sigma = mu ./ sigma;
 %mu_over_sigma2 = mu_over_sigma.^2;
 %normcdf_mu_over_sigma = normcdf(mu_over_sigma);
 %
-\E{q}{t_i} &= \mu_i + \frac{\sigma_i}{ \sqrt{2\pi} \Phi(\frac{\mu_i}{\sigma_i})}  \exp(-\frac{1}{2}\frac{\mu_i^2}{\sigma_i^2})  \\
-\E{q}{t_i t_j} &= \E{q}{t_i} \E{q}{t_j} \qquad\forall i\neq j, \\
+\E{q}{t_i} &= \mu_i + \frac{\sigma_i}{ \sqrt{2\pi} \Phi(\frac{\mu_i}{\sigma_i})}  \exp(-\frac{1}{2}\frac{\mu_i^2}{\sigma_i^2}),  \nonumber\\
 \E{q}{t_i^2} &= \mu_i^2 + \sigma_i^2 + \frac{\mu_i\sigma_i}{ \sqrt{2\pi} \Phi(\frac{\mu_i}{\sigma_i})}  \exp(-\frac{1}{2}\frac{\mu_i^2}{\sigma_i^2}) 
+\qquad \textnormal{and}\qquad \E{q}{t_i t_j} = \E{q}{t_i} \E{q}{t_j} \forall i\neq j.
 }\end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
