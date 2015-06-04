@@ -67,6 +67,7 @@
 \newcommand{\tauspace}{\mathcal{T}}
 
 \newcommand{\normdist}{\mathcal{N}}
+\newcommand{\truncnormdist}{\mathcal{TN}}
 \renewcommand{\r}{\Psi}
 \newcommand{\s}{s}
 \newcommand{\basem}{\nu}
@@ -76,6 +77,8 @@
 \newcommand{\red}[1]{{\color{red}#1}}
 
 \newcommand{\LSE}[3]{\bar{\mathbb{E}}_{#1}^{#2}\left[#3\right]}
+\newcommand{\E}[2]{\mathbb{E}_{#1}\left[#2\right]}
+%\newcommand{\entropy}[1]{\mathbb{H}\left[#1\right]}
 \newcommand{\unigint}[1]{{U}_{\left[#1\right]}}
 %\newcommand{\Expectation}[2]{\mathbb{E}_{#1}\left[#2\right]}
 \newcommand{\Expectation}[2]{\int{#2}d\nu(\Z)}
@@ -662,7 +665,30 @@ Figure~\ref{fig:TruncatedGauss} presents results on a two dimensional truncated 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+\subsection{VB for truncated multi-variate Gaussian integration}
+We start with \eqref{univ-gaussian-integral}: 
+\begin{align}
+\log I^*:=\log \int_{\Re^n}  \prod_{i=1}^n f_i(t_i)
+e^{-\frac 12 \t\transp \A \t + \bm b\transp \t} d\t  \geq L
+\end{align}
+where $L$ denotes the negative variational free energy, a.k.a.~the variational lower bound, given by
+\begin{align}
+L := \sum_{i=1}^n \E{q}{\log f_i(t_i)}
+-\frac 12  \trace(\A \E{q}{\t \t\transp}) + \bm b\transp \E{q}{\t}  + \entropy[q]
+\end{align}
+We choose the variational distribution $q$ to be a product of univariate truncated normal distributions which are truncated at zero. Let $q=\prod_i \truncnormdist(\mu_i, \sigma_i)$. The variational bound is given by
+\begin{align}{
+L &=  -\frac{1}{2}\trace(A \E{q}{\t\t\transp}) + \bm b\transp \E{q}{\t}  +\frac{n}{2}\log(2\pi)  +\frac{1}{2}\sum_i\Bigl( \log(\sigma_i) +\sigma_i^2 - \frac{\mu_i \sigma_i}{ \sqrt{2\pi} \Phi(\frac{\mu_i}{\sigma_i}) } \exp(-\frac{1}{2}\frac{\mu_i^2}{\sigma_i^2}) \Bigr) \\
+%elbo = -0.5*trace(params.A * E_tt) + params.b'*E_t +0.5*n*log(2*pi) +0.5*sum(log(sigma)) ...
+%    +0.5*sum( sigma.^2 - mu .* sigma / sqrt(2*pi) .* exp(-0.5*(mu_over_sigma2)) ./ normcdf_mu_over_sigma);
+%mu_over_sigma = mu ./ sigma;
+%mu_over_sigma2 = mu_over_sigma.^2;
+%normcdf_mu_over_sigma = normcdf(mu_over_sigma);
+%
+\E{q}{t_i} &= \mu_i + \frac{\sigma_i}{ \sqrt{2\pi} \Phi(\frac{\mu_i}{\sigma_i})}  \exp(-\frac{1}{2}\frac{\mu_i^2}{\sigma_i^2})  \\
+\E{q}{t_i t_j} &= \E{q}{t_i} \E{q}{t_j} \qquad\forall i\neq j, \\
+\E{q}{t_i^2} &= \mu_i^2 + \sigma_i^2 + \frac{\mu_i\sigma_i}{ \sqrt{2\pi} \Phi(\frac{\mu_i}{\sigma_i})}  \exp(-\frac{1}{2}\frac{\mu_i^2}{\sigma_i^2}) 
+}\end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
