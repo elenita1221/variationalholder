@@ -111,7 +111,7 @@ for d = d_values
                 objfun_vb = @(t) negative_lower_bound_logpartition(params,t);
                 
                 Ainv = inv(params.A); mu_tmp = params.A\params.b;
-                initial_soln = [0.1*(diag(Ainv).^0.5); mu_tmp];
+                initial_soln = [0.5*(diag(Ainv).^0.5); mu_tmp];
                 [final_soln,final_objfun_vb] = fminunc(objfun_vb,initial_soln,...
                     optimset('Display','off','MaxFunEvals',10000,'TolX',1e-7));
                 final_soln_sigma = final_soln(1:length(final_soln)/2);
