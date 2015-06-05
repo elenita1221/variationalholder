@@ -5,30 +5,23 @@ warning
 
 %K = 3 %number of settings = number of rows in the plot
 kappa_values = [1];
-d_values = 3:4;
+d_values = 2;%3:4;
 center_values = [1:2];
 verbose = 0;
+num = 0;%index of the experiment
 for d = d_values
-    for k = 1:d
+    for k = [1 d]
         for c = center_values
             for kappa = kappa_values
-                
-                v = randn(d, k);
-                params.A = v * v' + kappa * eye(d);
-                params.Achol = chol(params.A);
-                if c == 1
-                    center = zeros(d,1);
-                elseif c == 2
-                    center = linspace(-d/2,d/2,d)';
-                end
-                params.b = params.A * center;
+                num = num + 1;
+                fprintf('\nExperiment %d\nd=%d\nk=%d\nc=%d\nkappa=%3.2f\n',num,d,k,c,kappa)
+                params = make_expt_params(d,k,c,kappa);
    
-                log_step_func = @(t) -1e10*real(t<0);
-                
+                log_step_func = @(t) -1e10*real(t<0);                
                 %first function: step function in each of the directions
                 log_f = @(t) log_step_func(t(:,1)) + log_step_func(t(:,2));
                 %second function: Correlated Gaussian
-                log_g = @(t) -.5*sum((t*params.Achol').^2,2) + t*b;
+                log_g = @(t) -.5*sum((t*params.Achol').^2,2) + t*params.b;
                 %pivot function: diagonal covariance Gaussian
                 log_r = @(t,theta) -.5*sum((t.^2).*(ones(size(t,1),1)*theta(1:d)'),2) + t*theta(d+1:end);
                 %    fg = {log_f,params};
@@ -68,10 +61,13 @@ for d = d_values
                 
                 rho1 = sigmoid(res1(end)); %the first coefficient
                 theta1=res1(1:end-1);
-                
+                I_fr1 = ???;
                 if d == 2
                     %   I_fr = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
-                    I_fr = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
+                    I_fr2 = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
+                    [I_fr1 I_fr2] 
+                    ddd
+             
                     mx_fr = 1/I_fr*integral2(@(x,y) x.*reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
                     my_fr = 1/I_fr*integral2(@(x,y) y.*reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
                     
@@ -79,20 +75,8 @@ for d = d_values
                     I_gr = integral2(@(x,y) reshape(exp(1./(1-rho1)*log_g([x(:) y(:)])-1./(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
                     mx_gr = 1/I_gr*integral2(@(x,y) x.*reshape(exp(1./(1-rho1)*log_g([x(:) y(:)])-1./(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
                     my_gr = 1/I_gr*integral2(@(x,y) y.*reshape(exp(1./(1-rho1)*log_g([x(:) y(:)])-1./(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
-                    %
-                    log_valr = log_r(gridpoints,theta1);
-                    valr = exp(log_valr);
-                    val_approx_fr = valf.^(1./rho1)     .* valr.^(1./rho1);
-                    val_approx_gr = valg.^(1./(1-rho1)) ./ valr.^(1./(1-rho1));
                 end
                 
-%                 ep=.00001;%nearly 0 so that the integral is a standard one \int{f*g}
-%                 % if only the diagonal elements of A are used
-%                 IDiago = factor_scaled_integral_univ({log_step_func, log_step_func},[diag(params.A);params.b],1-ep,1/ep);
-%                 % if we remove the truncation
-%                 IGauss = factor_scaled_integral_gauss(params,zeros(d*2,1),1-ep);
-%                 
-%                 % truncated gaussian with diagonal covariance
 %                 Ifr = factor_scaled_integral_univ({log_step_func, log_step_func},theta1,1-ep,1/ep);
 %                 
 %                 % correlated gaussian without truncation
@@ -118,9 +102,8 @@ for d = d_values
                 final_soln_mu = final_soln(length(final_soln)/2+1:length(final_soln));
                 holder_soln_sigma = 1./sqrt(theta1(1:end/2));
                 holder_soln_mu = theta1(end/2+1:end);
-                mx_vb = final_soln_mu(1); my_vb = final_soln_mu(2);
-                
-                
+                mx_vb = final_soln_mu(1); 
+                my_vb = final_soln_mu(2);                                
             end
         end
     end
