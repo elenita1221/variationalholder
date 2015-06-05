@@ -67,6 +67,7 @@ for d = d_values
                 
                 
                 rho1 = sigmoid(res1(end)); %the first coefficient
+                res1 = [zeros(2,1);zeros(2,1);-5];
                 theta1=res1(1:end-1);
                 [I_gr,~, m_gr, m2_gr] = factor_scaled_integral_gauss(params, -res1);
                 [I_fr,~, m_fr, m2_fr] = factor_scaled_integral_orthant(res1);
