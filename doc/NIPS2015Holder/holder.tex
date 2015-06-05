@@ -204,7 +204,7 @@ Address \\
 
 \begin{abstract} 
 %This paper introduces the Variational Holder bound as an convex alternative to Variational Bayes, and applies it to the problem of Bayesian probit regression. 
-We introduce the Variational \Holder (VH) bound as an alternative to Variational Bayes (VB) for approximate Bayesian inference. Unlike VB which typically involves maximization of a non-convex lower bound with respect to the variational parameters, the VH bound involves minimization of a convex upper bound to the intractable integral with respect to the variational parameters. Minimization of the VH bound is a convex optimization problem; hence the VH method can be applied using off-the-shelf convex optimization algorithms and the approximation error of the VH bound can also be analyzed using tools from convex optimization literature. We present experiments on Bayesian probit regression and show that the parameter estimates obtained using the VH method closely approximate the parameter estimates obtained using the classic Albert and Chib auxiliary variable sampler.
+We introduce the Variational \Holder (VH) bound as an alternative to Variational Bayes (VB) for approximate Bayesian inference. Unlike VB which typically involves maximization of a non-convex lower bound with respect to the variational parameters, the VH bound involves minimization of a convex upper bound to the intractable integral with respect to the variational parameters. Minimization of the VH bound is a convex optimization problem; hence the VH method can be applied using off-the-shelf convex optimization algorithms and the approximation error of the VH bound can also be analyzed using tools from convex optimization literature. \red{We present experiments on Bayesian probit regression and show that the parameter estimates obtained using the VH method closely approximate the parameter estimates obtained using the classic Albert and Chib auxiliary variable sampler.}
 \end{abstract} 
 
 
@@ -256,16 +256,19 @@ design~\citep{SeegerNickisch2011}.
 More interestingly, \citet{liu11d} showed that new inference algorithms can be obtained 
 by minimizing the generalized \Holder's inequality applied on the partition function of a discrete graphical model.
 Such algorithms do not suffer from the zero-avoiding behavior of VB
-and the lack of convergence guarantees of EP, and has strong connections with the TRW convex upper bound to the partition function.
+and the lack of convergence guarantees of EP, and has strong connections with the TRW convex upper bound to the partition function. 
 
-In this work, we introduce Variational \Holder inequality, a family of tractable upper bounds to the product
-of potentials, possibly defined on a continuous space, unlike previous work focusing on pairwise discrete potentials. 
-We show that we can infer continuous latent variables values in a Bayesian inference problem using only two potentials: 
-the first  is the prior distribution and the second is the likelihood term. 
+In this work, we introduce the Variational \Holder (VH) inequality, a family of tractable upper bounds to the product
+of potentials, possibly defined on a continuous space, unlike previous work focusing %on pairwise discrete potentials. 
+only on the discrete case. Hence, our bound generalizes earlier work by \citet{liu11d} and is simpler in construction.  
+%We show that we can infer continuous latent variables values in a Bayesian inference problem using only two potentials: 
+% the first  is the prior distribution and the second is the likelihood term. 
+\red{We show that we can infer continuous latent variables values in a Bayesian inference problem where the unnormalized integral is a product of two potentials corresponding to the prior and likelihood respectively. The optimization with respect to the variational parameters in VH is a convex optimization problem and can be solved using off-the-shelf tools. We compare the performance of our method to VB on ...}
+%the first  is the prior distribution and the second is the likelihood term. 
 
 
-
-
+\citep{hoffman2014stochastic}
+\citep{meltzer2009convergent}
 
 \section{Variational \Holder bound}
 \label{sec:vh}
@@ -432,7 +435,8 @@ following mixture model:
 \end{eqnarray}
 as an approximating distribution.
 In their seminal paper, \citet{liu11d} also minimized the \Holder's bound with respect to parameters and exponent values, but
-their approach is restricted to pairwise discrete graphical models, and they applied this idea in the framework of the bucket elimination algorithm.
+their approach is restricted to %pairwise
+ discrete graphical models, and they applied this idea in the framework of the bucket elimination algorithm.
 
 So far, the VH bound is very general. It can be applied on discrete and continuous spaces. The sole assumption we made is that $\proba^*\in\mathcal{L}_1$, $\gamma_1\Psi(:,\tau)\in\mathcal{L}_{\alpha_1}$ and$\gamma_2\/\Psi(:,\tau)\in\mathcal{L}_{\alpha_2}$ for any $\tau\in\tauspace$ and any $\alpha_k$ in the
 range of \Holder's exponents that are considered. We now turn on to a specific class of functions to illustrate how the VH bound is used in practice.
@@ -611,7 +615,7 @@ respectively.
 \subsection{Truncated multi-variate Gaussian integration}
 Most of the truncated multivariate Gaussian integration problems with linear
 truncations can be put under the canonical form (\ref{univ-gaussian-integral})
-where truncations are orthogonal\footnote{ In their general form, truncated Gaussian integration problems
+where truncations are orthogonal,\footnote{ In their general form, truncated Gaussian integration problems
 are based on the estimation of $\int_{\Re^n}  \prod_{i=1}^n f_i(\alpha_i +
 \beta_i\transp t_i) e^{-\frac 12 \t\transp \A \t + b\transp \t} d\t$, but a
 change of variable $\alpha_i + \beta_i\t_i \rightarrow \t_i$ leads to the
@@ -619,7 +623,8 @@ canonical form \eqref{univ-gaussian-integral} if there is no parallel truncation
 lines, i.e. box constraints. Box constraints can be handled by a simple
 modification involving two-sided univariate truncations. 
 %See the Appendix~D for an example.
-}, i.e.
+}
+ i.e.
  $f_i(x)=\Indic{x\ge 0}$ for all $i\in\{1,\cdots,n\}$.
 Integrating truncated correlated Gaussian is a known open problem for which
 several approximation techniques have been proposed.
