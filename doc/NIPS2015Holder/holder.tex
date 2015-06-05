@@ -661,10 +661,9 @@ multivariate truncated Gaussian:
 	 %+ \frac 1{\alpha_1} J(\frac 1{\alpha_1}\diag{\btau_1}, \tau_2)   
 %	 \nonumber
 %	 \\	 
-  	 + \frac 1{\alpha_2} J({\alpha_2}(A-\diag{\btau_1}), {\alpha_2}(b-\tau_2))  + C
+  	 + \frac 1{\alpha_2} J({\alpha_2}(A-\diag{\btau_1}), {\alpha_2}(b-\tau_2))  -\frac n2 \log (2\pi). %+ C
 \end{flalign}
-
-where $C:=-\frac n2 \log (2\pi)$. 
+%where $C:=-\frac n2 \log (2\pi)$. 
 %We do not need to use a projection step in the gradient descent algorithm because the $\log-$determinant  functions act as barrier functions: they prevent the solution estimate to move outside the constraint set.\footnote{The objective function equals $\infty$ outside $\tauspace$.}
 
 Figure~\ref{fig:TruncatedGauss} presents results on a two dimensional truncated gaussian integration problem. The optimal value of $\alpha_1$ depends on both the level of truncation and the correlation. %We observe that the mean of the tractable integrals provides a good approximation to the exact mean.
@@ -685,7 +684,7 @@ L := \sum_{i=1}^n \E{q}{\log f_i(t_i)}
 \end{align}
 We choose the variational distribution $q$ to be a product of univariate truncated normal distributions which are truncated at zero. Let $q=\prod_i \truncnormdist(\mu_i, \sigma_i)$. The variational bound is given by
 \begin{align}{
-L &=  -\frac{1}{2}\trace(A \E{q}{\t\t\transp}) + \bm b\transp \E{q}{\t}  +\frac{n}{2}\log(2\pi e)  +\frac{1}{2}\sum_i\Bigl( \log\bigl(\sigma_i \Phi(\frac{\mu_i}{\sigma_i})\bigr) - \frac{\mu_i}{ \sqrt{2\pi} \sigma_i \Phi(\frac{\mu_i}{\sigma_i}) } \exp(-\frac{1}{2}\frac{\mu_i^2}{\sigma_i^2}) \Bigr), \nonumber\\
+L &=  -\frac{1}{2}\trace(A \E{q}{\t\t\transp}) + \bm b\transp \E{q}{\t}  +\frac{n}{2}\log(2\pi e)  +\sum_i\Bigl( \log\bigl(\sigma_i \Phi(\frac{\mu_i}{\sigma_i})\bigr) - \frac{\mu_i}{ 2\sqrt{2\pi} \sigma_i \Phi(\frac{\mu_i}{\sigma_i}) } \exp(-\frac{1}{2}\frac{\mu_i^2}{\sigma_i^2}) \Bigr), \nonumber\\
 %elbo = -0.5*trace(params.A * E_tt) + params.b'*E_t +0.5*n*log(2*pi) +0.5*sum(log(sigma)) ...
 %    +0.5*sum( sigma.^2 - mu .* sigma / sqrt(2*pi) .* exp(-0.5*(mu_over_sigma2)) ./ normcdf_mu_over_sigma);
 %mu_over_sigma = mu ./ sigma;
@@ -699,256 +698,257 @@ L &=  -\frac{1}{2}\trace(A \E{q}{\t\t\transp}) + \bm b\transp \E{q}{\t}  +\frac{
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Probit regression}
-\label{probit}
-%Probit regression is a GLM for binary observations.
-In Bayesian statistics, probit regression is often preferred to logistic
-regression as there is a natural interpretation of the model as a multivariate
-truncated Gaussian variable, corresponding exactly to the integral 
-studied in the previous section.
-While efficient sampling and variational algorithms~\citep{opper2000gaussian, csato2002sparse} 
-have been proposed, we show here that similar performances can be obtained using the 
-variational \Holder approach. In brief, we apply the upper bounding technique to the evidence
-integral to obtain tractable approximations.
-
-Let $\dataset=(\X,\y)$, where $\X\in\Re^{m\times d}$ is the data matrix, i.e.
-$X_{ij}$ is the value of the $j$-th covariate for the $i$-th data point, and
-$\y\in\{-1,1\}^m$ the vector of binary output variables. We define $\Z$ as the
-signed data matrix, such that $\Z_{ij} = y_i X_{ij}$.
-With these notations, the likelihood function is:
-$$ \proba(\dataset|\w) = \prod_{i=1}^m \proba(y_i|X_{i1},\cdots,X_{id},\w)  =
-\Phi(\Z\w) \enspace, $$ where the function $\Phi:\Re^m\mapsto [0,1]$ 
-is the product of normal CDFs:
-\begin{align}
-\Phi(\s)
-% &=& 
-= 
-\prod_{i=1}^m \int_{-\infty}^{s_i} \normdist(u_i|0,1) du_i 
+%\subsection{Probit regression}
+%\label{probit}
+%%Probit regression is a GLM for binary observations.
+%In Bayesian statistics, probit regression is often preferred to logistic
+%regression as there is a natural interpretation of the model as a multivariate
+%truncated Gaussian variable, corresponding exactly to the integral 
+%studied in the previous section.
+%While efficient sampling and variational algorithms~\citep{opper2000gaussian, csato2002sparse} 
+%have been proposed, we show here that similar performances can be obtained using the 
+%variational \Holder approach. In brief, we apply the upper bounding technique to the evidence
+%integral to obtain tractable approximations.
+%
+%Let $\dataset=(\X,\y)$, where $\X\in\Re^{m\times d}$ is the data matrix, i.e.
+%$X_{ij}$ is the value of the $j$-th covariate for the $i$-th data point, and
+%$\y\in\{-1,1\}^m$ the vector of binary output variables. We define $\Z$ as the
+%signed data matrix, such that $\Z_{ij} = y_i X_{ij}$.
+%With these notations, the likelihood function is:
+%$$ \proba(\dataset|\w) = \prod_{i=1}^m \proba(y_i|X_{i1},\cdots,X_{id},\w)  =
+%\Phi(\Z\w) \enspace, $$ where the function $\Phi:\Re^m\mapsto [0,1]$ 
+%is the product of normal CDFs:
+%\begin{align}
+%\Phi(\s)
+%% &=& 
+%= 
+%\prod_{i=1}^m \int_{-\infty}^{s_i} \normdist(u_i|0,1) du_i 
+%%\nonumber
+%%\\&=&
+%=
+%\int_{\Re^m}
+%\Indic{\v  \ge 0} \normdist(\v|\s,\eye_m) d\v \enspace,
 %\nonumber
-%\\&=&
-=
-\int_{\Re^m}
-\Indic{\v  \ge 0} \normdist(\v|\s,\eye_m) d\v \enspace,
-\nonumber
-\end{align}
- with
-$\normdist(\u|\bm\mu,\Sigma)$ being the multivariate Gaussian PDF with mean $\bm\mu$ and
-covariance matrix $\Sigma$.
-\newcommand{\blambda}{\bm{\lambda}}
-% =  (2\rho)^{-\frac{d}{2}} e^{-\frac 12 \|u\|^2}$ denotes the unit normal pdf.
-We consider $d$-dimensional normal priors $\proba(\w|\blambda):=\normdist(\w| \bzeros_d,\diag{\blambda})$
-where $\blambda\in (0,\infty)^d$.
-%where $\bm\mu_0:Re^p\mapsto\Re^d$ and $\Lambda_0:\Re^p\mapsto\mathcal{S}_d^+$ are the prior mean and precision matrix 
-%parameterized by the $p$-dimensional vector $\lambda$.
-% 's parameterized by a common scale~$\lambda$:
-% $\proba(\w):= c(\lambda)^{-d} \prod_{j=1}^d e^{-\frac{\lambda}{2} \ell(w_j)}$
-% where $\ell$ is a univariate loss corresponding to the negative log-likelihood
-% of a Student, Laplace or Gaussian distribution and $c$ is the partition
-% function of the prior: $c(\lambda):=\int_\Re e^{-\frac{\lambda}{2}
-% \ell(z)}dz$.
-The marginal data probability (evidence) $\proba(\dataset|\lambda)$ is obtained by averaging this
-likelihood over the prior distribution:
+%\end{align}
+% with
+%$\normdist(\u|\bm\mu,\Sigma)$ being the multivariate Gaussian PDF with mean $\bm\mu$ and
+%covariance matrix $\Sigma$.
+%\newcommand{\blambda}{\bm{\lambda}}
+%% =  (2\rho)^{-\frac{d}{2}} e^{-\frac 12 \|u\|^2}$ denotes the unit normal pdf.
+%We consider $d$-dimensional normal priors $\proba(\w|\blambda):=\normdist(\w| \bzeros_d,\diag{\blambda})$
+%where $\blambda\in (0,\infty)^d$.
+%%where $\bm\mu_0:Re^p\mapsto\Re^d$ and $\Lambda_0:\Re^p\mapsto\mathcal{S}_d^+$ are the prior mean and precision matrix 
+%%parameterized by the $p$-dimensional vector $\lambda$.
+%% 's parameterized by a common scale~$\lambda$:
+%% $\proba(\w):= c(\lambda)^{-d} \prod_{j=1}^d e^{-\frac{\lambda}{2} \ell(w_j)}$
+%% where $\ell$ is a univariate loss corresponding to the negative log-likelihood
+%% of a Student, Laplace or Gaussian distribution and $c$ is the partition
+%% function of the prior: $c(\lambda):=\int_\Re e^{-\frac{\lambda}{2}
+%% \ell(z)}dz$.
+%The marginal data probability (evidence) $\proba(\dataset|\lambda)$ is obtained by averaging this
+%likelihood over the prior distribution:
+%
+%\begin{align}
+%\int_{\Re^d} \proba(\dataset|\w) d\proba(\w|\lambda)
+%%\\&=&
+%&=
+%\int_{\Re^d} \Phi(\Z\w) d\proba(\w)
+%% \nonumber\\
+%% && 
+% =\int_{\Re^{d}}\int_{\Re^{+m}} %\Indic{\v \ge 0} 
+% \normdist(\v|\Z\w,\eye_m) \normdist(\w|\bzeros_m,\diag{\blambda}) d\v d\w
+%\nonumber\\
+%&= c_\lambda \times \int_{\Re^{d+m}}e^{-\frac 12 \t\transp A_\lambda \t}  \prod_{i=1}^{n} f_i(t_i)  d\t
+%\label{prod-space}
+%\end{align}
+%
+%with $n=d+m$, $c_\lambda = {(2\pi)^{-\frac{n}{2}}} {\prod_{i=1}^n\sqrt{\lambda_i}}$,
+%\begin{eqnarray} 
+%&&\A_\lambda = 	\left[\begin{array}{ll}
+%		 \diag{\blambda}  + \Z \transp \Z & -\Z\transp
+%		\\
+%		-\Z & \eye_m
+%	\end{array}
+%	\right]
+%	\\
+%&& \textrm{and}\quad\  f_i(t_i) =  	\left\lbrace\begin{array}{ll}
+%		1 &\ \textrm{if}\ i\le d \\
+%		\Indic{t_i\ge 0} &\ \textrm{otherwise} 
+%	\end{array}
+%	\right.
+%\enspace.
+%\end{eqnarray}
+%The symbols $\eye$ and $\bzeros$ denote the identity and zero matrices.
+%Equation~(\ref{prod-space}) is based on the concatenation $\t:=[\w\transp,\v\transp]\transp$ and 
+%corresponds exactly the same form as Equation~\eqref{univ-gaussian-integral}, i.e. a correlated Gaussian PDF multiplied by orthogonal $n=d+m$ univariate functions. 
+%We can now use the  VH bound on truncated correlated Gaussian model to obtain  an upper bound to the evidence, parameterized by $\btau$:
+%\begin{eqnarray} 
+% \log \proba(\dataset|\lambda) \le  \log \overline{\proba}_\tau(\dataset|\lambda) 
+%\enspace.
+%\end{eqnarray}
+%The final approximation to the log-partition function is either a diagonal covariance Gaussian with truncation $(\gamma_1\Psi)^{\alpha_1}$ or a correlated Gaussian with no truncation $(\gamma_2/\Psi)^{\alpha_2}$.
+%The objective given by Equation~\eqref{eq:obj} becomes:
+% \begin{flalign}
+% \label{eq:obj-probit}  
+%%	&
+%	\frac 1{\alpha_1}  \sum_{i=d+1}^n  \log\Phi({\tau_{2i}}\sqrt{\frac{\alpha_1}{\tau_{1i}}})
+%%\nonumber	 \\
+%%	 \quad
+%%	& 
+%	-  \sum_{i=1}^n \frac 1{2\alpha_1}\log(\alpha_1\tau_{1i})  + \frac{\tau_{2i}^2}{2\tau_{1i}} 
+%%	 \nonumber
+%%	 \\	 
+% % 	 &
+%	 + \frac 1{\alpha_2} J({\alpha_2}(A-\diag{\btau_1}), {\alpha_2}(b-\tau_2))  + C
+%\end{flalign}
+%
+%\paragraph{Automatic model selection by maximizing the evidence}
+%Type II maximum likelihood, also called \emph{Empirical Bayes} method, is a simple way to choose the prior distribution: the data evidence given by Formula~(\ref{prod-space}) is maximized, with respect to the parameters $\lambda$ of the prior distribution.% For example, one usually chose $\bm\mu_0(\lambda):=\bzeros_{d\times 1}$ and $\Lambda_0(\lambda):=\lambda \eye_d$.
+%Since the variational \Holder inequality gives an approximation $\overline{\proba}_\tau(\dataset|\lambda)$ to the exact data evidence $\proba(\dataset|\lambda)$, one can choose the best of these approximations, i.e. the one minimizing the upper bound. Maximizing the minimal upper bound corresponds to a max-min problem:
+%\begin{eqnarray} 
+%\max_{\lambda\in\Re^+} \min_{\tau\in\tauspace} \log \overline{\proba}_\tau(\dataset|\bzeros,\diag{\blambda})
+%\enspace.
+%\end{eqnarray}
+%\red{The objective function $ \log \overline{\proba}_\tau(\dataset|\bzeros,\diag{\blambda})$ being concave in $\lambda$ and convex in $\tau$, this is a well defined saddle point problem. A solution can be found using standard tools from convex optimization, such as the Arrow-Hurwicz-Uzawa algorithm~\citep{arrow1958studies, nedic2009subgradient}.}
+%
+%%Note that the loss $\ell$ is not necessarily convex, but the variational inference problem is convex. 
+%
 
-\begin{align}
-\int_{\Re^d} \proba(\dataset|\w) d\proba(\w|\lambda)
-%\\&=&
-&=
-\int_{\Re^d} \Phi(\Z\w) d\proba(\w)
-% \nonumber\\
-% && 
- =\int_{\Re^{d}}\int_{\Re^{+m}} %\Indic{\v \ge 0} 
- \normdist(\v|\Z\w,\eye_m) \normdist(\w|\bzeros_m,\diag{\blambda}) d\v d\w
-\nonumber\\
-&= c_\lambda \times \int_{\Re^{d+m}}e^{-\frac 12 \t\transp A_\lambda \t}  \prod_{i=1}^{n} f_i(t_i)  d\t
-\label{prod-space}
-\end{align}
+\section{Experiments}  % on higher dimensional truncated Gaussian
 
-with $n=d+m$, $c_\lambda = {(2\pi)^{-\frac{n}{2}}} {\prod_{i=1}^n\sqrt{\lambda_i}}$,
-\begin{eqnarray} 
-&&\A_\lambda = 	\left[\begin{array}{ll}
-		 \diag{\blambda}  + \Z \transp \Z & -\Z\transp
-		\\
-		-\Z & \eye_m
-	\end{array}
-	\right]
-	\\
-&& \textrm{and}\quad\  f_i(t_i) =  	\left\lbrace\begin{array}{ll}
-		1 &\ \textrm{if}\ i\le d \\
-		\Indic{t_i\ge 0} &\ \textrm{otherwise} 
-	\end{array}
-	\right.
-\enspace.
-\end{eqnarray}
-The symbols $\eye$ and $\bzeros$ denote the identity and zero matrices.
-Equation~(\ref{prod-space}) is based on the concatenation $\t:=[\w\transp,\v\transp]\transp$ and 
-corresponds exactly the same form as Equation~\eqref{univ-gaussian-integral}, i.e. a correlated Gaussian PDF multiplied by orthogonal $n=d+m$ univariate functions. 
-We can now use the  VH bound on truncated correlated Gaussian model to obtain  an upper bound to the evidence, parameterized by $\btau$:
-\begin{eqnarray} 
- \log \proba(\dataset|\lambda) \le  \log \overline{\proba}_\tau(\dataset|\lambda) 
-\enspace.
-\end{eqnarray}
-The final approximation to the log-partition function is either a diagonal covariance Gaussian with truncation $(\gamma_1\Psi)^{\alpha_1}$ or a correlated Gaussian with no truncation $(\gamma_2/\Psi)^{\alpha_2}$.
-The objective given by Equation~\eqref{eq:obj} becomes:
- \begin{flalign}
- \label{eq:obj-probit}  
-%	&
-	\frac 1{\alpha_1}  \sum_{i=d+1}^n  \log\Phi({\tau_{2i}}\sqrt{\frac{\alpha_1}{\tau_{1i}}})
-%\nonumber	 \\
-%	 \quad
-%	& 
-	-  \sum_{i=1}^n \frac 1{2\alpha_1}\log(\alpha_1\tau_{1i})  + \frac{\tau_{2i}^2}{2\tau_{1i}} 
-%	 \nonumber
-%	 \\	 
- % 	 &
-	 + \frac 1{\alpha_2} J({\alpha_2}(A-\diag{\btau_1}), {\alpha_2}(b-\tau_2))  + C
-\end{flalign}
-
-\paragraph{Automatic model selection by maximizing the evidence}
-Type II maximum likelihood, also called \emph{Empirical Bayes} method, is a simple way to choose the prior distribution: the data evidence given by Formula~(\ref{prod-space}) is maximized, with respect to the parameters $\lambda$ of the prior distribution.% For example, one usually chose $\bm\mu_0(\lambda):=\bzeros_{d\times 1}$ and $\Lambda_0(\lambda):=\lambda \eye_d$.
-Since the variational \Holder inequality gives an approximation $\overline{\proba}_\tau(\dataset|\lambda)$ to the exact data evidence $\proba(\dataset|\lambda)$, one can choose the best of these approximations, i.e. the one minimizing the upper bound. Maximizing the minimal upper bound corresponds to a max-min problem:
-\begin{eqnarray} 
-\max_{\lambda\in\Re^+} \min_{\tau\in\tauspace} \log \overline{\proba}_\tau(\dataset|\bzeros,\diag{\blambda})
-\enspace.
-\end{eqnarray}
-\red{The objective function $ \log \overline{\proba}_\tau(\dataset|\bzeros,\diag{\blambda})$ being concave in $\lambda$ and convex in $\tau$, this is a well defined saddle point problem. A solution can be found using standard tools from convex optimization, such as the Arrow-Hurwicz-Uzawa algorithm~\citep{arrow1958studies, nedic2009subgradient}.}
-
-%Note that the loss $\ell$ is not necessarily convex, but the variational inference problem is convex. 
-
-
-
-%\clearpage
-\section{Experiments}
-To illustrate how the bound is applied in practice, we focus on a toy example.
-We use a 1-dimensional toy probit regression example. We set $N=2$ and $\bx_1=1, \bx_2=-1$ and $y_1=1, y_2=-1$. For simplicity, we fix the prior over $w$ to $\normdist(0,1)$ and run the classic augmented variable Gibbs sampler proposed by \citet{albert1993bayesian} for 5000 iterations. We plot the running mean of posterior samples of $w$ as a function of the iteration. We repeat this procedure 100 times. The running mean for multiple iterations is shown in Fig.~\ref{fig:albertchib}. 
-We observe that the running mean converges after 2000 iterations in all runs, indicating the convergence of the sampler. The average of the running mean (after convergence) over multiple runs is 0.8477 and the $90\%$ quantile is given by $[0.8204, 0.8769]$.  We use this as ground truth to evaluate the quality of the solution from VH.
-
-%\begin{figure}[htbp]
-%\begin{center}
-%\includegraphics[scale=0.45]{../../src/VariationalHolder/matlab/blogreg/ProbRegSamp/albertchib}
-%\caption{Running mean of  samples drawn from the posterior over $w$ as a function of iteration. The plot shows 100 repetitions of the procedure.}
-%\label{fig:albertchib}
-%\end{center}
-%\end{figure}
-
-We used the {SciPy} implementation of modified Powell's method\footnote{\url{http://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.optimize.fmin_powell.html}.} to minimize the VH bound in Equation~\eqref{eq:obj-probit}.  We compute moments of each of the integrals and compute the overall moments as follows:
-$\bar\w_{1i} = \int \z (\gamma_1(\z_i)\Psi(\bz;\hat\tau))^{\alpha_1}d\nu(\bz)/\|\gamma_1(\z_i)\Psi(\bz;\hat\tau)\|^{\alpha_1}_{\alpha_1}$ corresponds to a
-truncated Gaussian expectation and $\bar\w_{2i} = \int \z (\gamma_2(\z_i)/\Psi(\bz;\hat\tau))^{\alpha_2}d\nu(\bz)/\|\gamma_2(\z_i)\Psi(\bz;\hat\tau)\|^{\alpha_2}_{\alpha_2}$
-is just the mean of a Gaussian distribution.
-%$\Expectation{$
-The moments computed using VH were $\bar\w_{1}=0.807, \bar\w_{2}=0.822$ and the convex combination was $\bar\w_{12}=0.8146$. %with $\alpha_1=2$. 
-We observe that even though there is a slight bias, the VH solution is very close to the solution obtained via sampling. %by the Albert and Chib sampler.
-
+%%\clearpage
+%\section{Experiments}  % on probit regression 
+%To illustrate how the bound is applied in practice, we focus on a toy example.
+%We use a 1-dimensional toy probit regression example. We set $N=2$ and $\bx_1=1, \bx_2=-1$ and $y_1=1, y_2=-1$. For simplicity, we fix the prior over $w$ to $\normdist(0,1)$ and run the classic augmented variable Gibbs sampler proposed by \citet{albert1993bayesian} for 5000 iterations. We plot the running mean of posterior samples of $w$ as a function of the iteration. We repeat this procedure 100 times. The running mean for multiple iterations is shown in Fig.~\ref{fig:albertchib}. 
+%We observe that the running mean converges after 2000 iterations in all runs, indicating the convergence of the sampler. The average of the running mean (after convergence) over multiple runs is 0.8477 and the $90\%$ quantile is given by $[0.8204, 0.8769]$.  We use this as ground truth to evaluate the quality of the solution from VH.
+%
+%%\begin{figure}[htbp]
+%%\begin{center}
+%%\includegraphics[scale=0.45]{../../src/VariationalHolder/matlab/blogreg/ProbRegSamp/albertchib}
+%%\caption{Running mean of  samples drawn from the posterior over $w$ as a function of iteration. The plot shows 100 repetitions of the procedure.}
+%%\label{fig:albertchib}
+%%\end{center}
+%%\end{figure}
+%
+%We used the {SciPy} implementation of modified Powell's method\footnote{\url{http://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.optimize.fmin_powell.html}.} to minimize the VH bound in Equation~\eqref{eq:obj-probit}.  We compute moments of each of the integrals and compute the overall moments as follows:
+%$\bar\w_{1i} = \int \z (\gamma_1(\z_i)\Psi(\bz;\hat\tau))^{\alpha_1}d\nu(\bz)/\|\gamma_1(\z_i)\Psi(\bz;\hat\tau)\|^{\alpha_1}_{\alpha_1}$ corresponds to a
+%truncated Gaussian expectation and $\bar\w_{2i} = \int \z (\gamma_2(\z_i)/\Psi(\bz;\hat\tau))^{\alpha_2}d\nu(\bz)/\|\gamma_2(\z_i)\Psi(\bz;\hat\tau)\|^{\alpha_2}_{\alpha_2}$
+%is just the mean of a Gaussian distribution.
+%%$\Expectation{$
+%The moments computed using VH were $\bar\w_{1}=0.807, \bar\w_{2}=0.822$ and the convex combination was $\bar\w_{12}=0.8146$. %with $\alpha_1=2$. 
+%We observe that even though there is a slight bias, the VH solution is very close to the solution obtained via sampling. %by the Albert and Chib sampler.
+%
+%%\begin{table}[htdp]
+%%\caption{Results on toy 1 dimensional dataset}
+%%\begin{center}
+%%\begin{tabular}{|c|c|c|c|}
+%%% $\dfrac{1}{\alpha_1}$
+%%\hline
+%%$\rho$ & $1/\alpha_1$ & VH & Gibbs $90\%$ interval \\
+%%\hline
+%%0.1 & 0.875 & -0.4 & (0.7, 0.72)  \\
+%%0.25 &  0.868 & -1.48 &  (1.31, 1.35)  \\
+%%0.5 & 0.869 & 2.09& (2.29, 2.43) \\
+%%1 & 0.834 & 3.97 & (3.55, 3.59) \\
+%%3 & 0.781 & 4.81& (4.8, 4.82) \\
+%%10 & 0.769 &4.97 & (5.04, 5.07) \\
+%%\hline
+%%\end{tabular}
+%%\end{center}
+%%\label{tab:toy1d}
+%%\end{table}%
+%
+%Next, we use $N=100$ data points and generate training data as follows: $x_m\sim \normdist(\rho y_m,1)$. The higher $\rho$, the more separable the two classes are. The values of the moments are shown in Table~\ref{tab:toy1dall}. We observe that as the $\rho$ increases, the problem simplifies and the optimal value of $1/\alpha_1$ increases implying that the overall posterior is `more Gaussian'.
+%
 %\begin{table}[htdp]
-%\caption{Results on toy 1 dimensional dataset}
+%
 %\begin{center}
-%\begin{tabular}{|c|c|c|c|}
+%\resizebox{0.55\columnwidth}{!}{
+%\begin{tabular}{|c|c|c|c|c|c|}
 %% $\dfrac{1}{\alpha_1}$
 %\hline
-%$\rho$ & $1/\alpha_1$ & VH & Gibbs $90\%$ interval \\
+%$\rho$ & $1/\alpha_1$ & $\bar\w_{1}$ & $\bar\w_{2}$ & $\bar\w_{12}$ (mix) & Gibbs $90\%$ CI \\
 %\hline
-%0.1 & 0.875 & -0.4 & (0.7, 0.72)  \\
-%0.25 &  0.868 & -1.48 &  (1.31, 1.35)  \\
-%0.5 & 0.869 & 2.09& (2.29, 2.43) \\
-%1 & 0.834 & 3.97 & (3.55, 3.59) \\
-%3 & 0.781 & 4.81& (4.8, 4.82) \\
-%10 & 0.769 &4.97 & (5.04, 5.07) \\
-%\hline
-%\end{tabular}
-%\end{center}
-%\label{tab:toy1d}
-%\end{table}%
-
-Next, we use $N=100$ data points and generate training data as follows: $x_m\sim \normdist(\rho y_m,1)$. The higher $\rho$, the more separable the two classes are. The values of the moments are shown in Table~\ref{tab:toy1dall}. We observe that as the $\rho$ increases, the problem simplifies and the optimal value of $1/\alpha_1$ increases implying that the overall posterior is `more Gaussian'.
-
-\begin{table}[htdp]
-
-\begin{center}
-\resizebox{0.55\columnwidth}{!}{
-\begin{tabular}{|c|c|c|c|c|c|}
-% $\dfrac{1}{\alpha_1}$
-\hline
-$\rho$ & $1/\alpha_1$ & $\bar\w_{1}$ & $\bar\w_{2}$ & $\bar\w_{12}$ (mix) & Gibbs $90\%$ CI \\
-\hline
-%0.1 & 0.875 & -0.575 & 0.82 & -0.4 & (0.7, 0.72)  \\
-%0.25 &  0.868 & -1.89 & 1.23 & -1.48 &  (1.31, 1.35)  \\
-0.5 & 0.869 & 2.03 & 2.54 & 2.09& (2.29, 2.43) \\
-1 & 0.834 & 4.05 & 3.56 & 3.97 & (3.55, 3.59) \\
-3 & 0.781 & 4.77 & 4.92  & 4.81& (4.8, 4.82) \\
-10 & 0.769 & 4.93 & 5.1 & 4.97 & (5.04, 5.07) \\
-\hline
-\end{tabular}
-}
-\end{center}
-\caption{Results on one dimensional dataset.}% for varying $\rho$.}
-\label{tab:toy1dall}
-\end{table}%
-
-%\begin{table}[htdp]
-%\caption{Results on toy 2 dimensional dataset}
-%\begin{center}
-%\begin{tabular}{|c|c|c|c|}
-%% $\dfrac{1}{\alpha_1}$
-%\hline
-%$\rho$ & $1/\alpha_1$ & VH & Gibbs \\
-%\hline
-%0.1 & 0.856 & 0.83, 0.83 & -0.04, 0.04  \\
-%0.5 & 0.814 & 2.51, 2.44 &  1.2, 2.14 \\
-%1 & 0.786 &  3.25, 3.25 & 3.05, 3.07  \\
-%3 & 0.766 & 3.32, 3.58 & 3.53, 3.52 \\
-%10 & 0.758 & 3.53, 3.66 &  3.55, 3.63 \\
+%%0.1 & 0.875 & -0.575 & 0.82 & -0.4 & (0.7, 0.72)  \\
+%%0.25 &  0.868 & -1.89 & 1.23 & -1.48 &  (1.31, 1.35)  \\
+%0.5 & 0.869 & 2.03 & 2.54 & 2.09& (2.29, 2.43) \\
+%1 & 0.834 & 4.05 & 3.56 & 3.97 & (3.55, 3.59) \\
+%3 & 0.781 & 4.77 & 4.92  & 4.81& (4.8, 4.82) \\
+%10 & 0.769 & 4.93 & 5.1 & 4.97 & (5.04, 5.07) \\
 %\hline
 %\end{tabular}
+%}
 %\end{center}
-%\label{tab:toy2d}
+%\caption{Results on one dimensional dataset.}% for varying $\rho$.}
+%\label{tab:toy1dall}
 %\end{table}%
-
-
 %
-%\subsection{Toy problem with tractable solutions}
-%Start with problems where integral is analytically tractable (e.g. conjugate exponential families) and compare VH solution with true solution
-%
-%
-%\subsubsection{Product of probits - Solution 1}
-%We want to compute the unidimensional integral of $\gamma(x):=e^{-\frac{\lambda_0}{2} x^2}\Phi(a_1 x + b_1)\Phi(a_2 x + b_2)$,
-%where $\Phi$ is the Gaussian cdf $\Phi(t) := (2\pi)^{-\frac 12}\int_{-\infty}^t e^{-\frac{z^2}{2}} dz$.
-%
-%We know how to integrate the product of a Gaussian pdf and a Gaussian cdf:
-%\begin{eqnarray}
-%	\int_\Re \Phi(a x + b) e^{-\frac{c}{2} x^2}  dx = \frac{1}{c} \Psi\left( \frac{b}{\sqrt{a^2 + 1}}\right)
-%	\enspace.
-%\end{eqnarray}
-%and more generally we define the special function $S:\Re^4\mapsto \Re$ as:
-%\begin{eqnarray}
-%	S(a,b,c,\delta) := \int_\Re \Phi(a x + b) e^{-\frac{c}{2} x^2 + \delta x} dx = \frac{1}{c} e^{\frac{\alpha^2}{2c}} \Psi\left( \frac{b + \frac{a d}{c}}{\sqrt{a^2 + 1}}\right)
-%	\enspace.
-%\end{eqnarray}
-%So, if the pivot function has a squared-exponential shape, i.e. $\Psi(x):=e^{-\tau_1 \frac{x^2}{2} + \tau_2}$ we can choose:
-%\begin{itemize}
-%\item $\gamma_1(x):=\Phi(a_1 x + b_1) e^{-\frac 12 \tau_1 x^2 + \tau_2 x}$
-%\item $\gamma_2(x):=\Phi(a_2 x + b_2) e^{-\frac 12 (\lambda_0-\tau_1) x^2 - \tau_2 x}$
-%\end{itemize}
-%One can check that $\gamma=\gamma_1\gamma_2$. To be able to integrate theses functions, we need that $0<\tau_1<\lambda_0$, and we get:
-%\begin{itemize}
-%\item $\int_\Re\gamma_1(x) dx = S(a_1, b_1, \tau_1, \tau_1)$
-%\item $\int_\Re\gamma_2(x) dx = S(a_2, b_2, \lambda_0 - \tau_1, -\tau_2)$
-%\end{itemize}
-
-
-%\subsection{VH vs sampling for Bayesian logistic regression}
-%\begin{itemize}{
-%\item VH is convex optimization problem, however it's not clear if the VH minima corresponds to a useful solution for the true posterior
-%\item Gibbs sampling: hard to assess convergence
-%}\end{itemize}
+%%\begin{table}[htdp]
+%%\caption{Results on toy 2 dimensional dataset}
+%%\begin{center}
+%%\begin{tabular}{|c|c|c|c|}
+%%% $\dfrac{1}{\alpha_1}$
+%%\hline
+%%$\rho$ & $1/\alpha_1$ & VH & Gibbs \\
+%%\hline
+%%0.1 & 0.856 & 0.83, 0.83 & -0.04, 0.04  \\
+%%0.5 & 0.814 & 2.51, 2.44 &  1.2, 2.14 \\
+%%1 & 0.786 &  3.25, 3.25 & 3.05, 3.07  \\
+%%3 & 0.766 & 3.32, 3.58 & 3.53, 3.52 \\
+%%10 & 0.758 & 3.53, 3.66 &  3.55, 3.63 \\
+%%\hline
+%%\end{tabular}
+%%\end{center}
+%%\label{tab:toy2d}
+%%\end{table}%
 %
 %
-%\subsection{VH vs VB}
-%\begin{itemize}{
-%\item Experiment that illustrates advantage of global optima of VH over local optima of VB
-%\item \red{BL: I think it'd be interesting to compare VH and VB on a problem where the target distribution has subspaces with zero probability.}
-%}\end{itemize}
+%%
+%%\subsection{Toy problem with tractable solutions}
+%%Start with problems where integral is analytically tractable (e.g. conjugate exponential families) and compare VH solution with true solution
+%%
+%%
+%%\subsubsection{Product of probits - Solution 1}
+%%We want to compute the unidimensional integral of $\gamma(x):=e^{-\frac{\lambda_0}{2} x^2}\Phi(a_1 x + b_1)\Phi(a_2 x + b_2)$,
+%%where $\Phi$ is the Gaussian cdf $\Phi(t) := (2\pi)^{-\frac 12}\int_{-\infty}^t e^{-\frac{z^2}{2}} dz$.
+%%
+%%We know how to integrate the product of a Gaussian pdf and a Gaussian cdf:
+%%\begin{eqnarray}
+%%	\int_\Re \Phi(a x + b) e^{-\frac{c}{2} x^2}  dx = \frac{1}{c} \Psi\left( \frac{b}{\sqrt{a^2 + 1}}\right)
+%%	\enspace.
+%%\end{eqnarray}
+%%and more generally we define the special function $S:\Re^4\mapsto \Re$ as:
+%%\begin{eqnarray}
+%%	S(a,b,c,\delta) := \int_\Re \Phi(a x + b) e^{-\frac{c}{2} x^2 + \delta x} dx = \frac{1}{c} e^{\frac{\alpha^2}{2c}} \Psi\left( \frac{b + \frac{a d}{c}}{\sqrt{a^2 + 1}}\right)
+%%	\enspace.
+%%\end{eqnarray}
+%%So, if the pivot function has a squared-exponential shape, i.e. $\Psi(x):=e^{-\tau_1 \frac{x^2}{2} + \tau_2}$ we can choose:
+%%\begin{itemize}
+%%\item $\gamma_1(x):=\Phi(a_1 x + b_1) e^{-\frac 12 \tau_1 x^2 + \tau_2 x}$
+%%\item $\gamma_2(x):=\Phi(a_2 x + b_2) e^{-\frac 12 (\lambda_0-\tau_1) x^2 - \tau_2 x}$
+%%\end{itemize}
+%%One can check that $\gamma=\gamma_1\gamma_2$. To be able to integrate theses functions, we need that $0<\tau_1<\lambda_0$, and we get:
+%%\begin{itemize}
+%%\item $\int_\Re\gamma_1(x) dx = S(a_1, b_1, \tau_1, \tau_1)$
+%%\item $\int_\Re\gamma_2(x) dx = S(a_2, b_2, \lambda_0 - \tau_1, -\tau_2)$
+%%\end{itemize}
 %
-
-%\section{Prior art}
+%
+%%\subsection{VH vs sampling for Bayesian logistic regression}
+%%\begin{itemize}{
+%%\item VH is convex optimization problem, however it's not clear if the VH minima corresponds to a useful solution for the true posterior
+%%\item Gibbs sampling: hard to assess convergence
+%%}\end{itemize}
+%%
+%%
+%%\subsection{VH vs VB}
+%%\begin{itemize}{
+%%\item Experiment that illustrates advantage of global optima of VH over local optima of VB
+%%\item \red{BL: I think it'd be interesting to compare VH and VB on a problem where the target distribution has subspaces with zero probability.}
+%%}\end{itemize}
+%%
+%
+%%\section{Prior art}
 
 
 
