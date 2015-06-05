@@ -63,6 +63,7 @@ for d = d_values
                 A=eye(2);
                 b = [0;0];
                 rho1 = sigmoid(res1(end)); %the first coefficient
+                res1 = [zeros(2,1);zeros(2,1);-5];
                 theta1=res1(1:end-1);
                 [I_gr,~, m_gr] = factor_scaled_integral_gauss(params, -res1);
                 

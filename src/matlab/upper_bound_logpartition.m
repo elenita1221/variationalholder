@@ -1,4 +1,4 @@
-function [logIbar, logIbar_grad, logIfg] = upper_bound_logpartition(params,theta)
+function [logIbar, logIbar_grad, logIfg, m, v] = upper_bound_logpartition(params,theta)
 
 logIfg = [0 0];
 %[a,b] = factor_scaled_integral_univ(fg{1},theta,rho,delta);
