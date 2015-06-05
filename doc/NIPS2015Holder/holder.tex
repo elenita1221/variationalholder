@@ -204,7 +204,9 @@ Address \\
 
 \begin{abstract} 
 %This paper introduces the Variational Holder bound as an convex alternative to Variational Bayes, and applies it to the problem of Bayesian probit regression. 
-We introduce the Variational \Holder (VH) bound as an alternative to Variational Bayes (VB) for approximate Bayesian inference. Unlike VB which typically involves maximization of a non-convex lower bound with respect to the variational parameters, the VH bound involves minimization of a convex upper bound to the intractable integral with respect to the variational parameters. Minimization of the VH bound is a convex optimization problem; hence the VH method can be applied using off-the-shelf convex optimization algorithms and the approximation error of the VH bound can also be analyzed using tools from convex optimization literature. \red{We present experiments on Bayesian probit regression and show that the parameter estimates obtained using the VH method closely approximate the parameter estimates obtained using the classic Albert and Chib auxiliary variable sampler.}
+We introduce the Variational \Holder (VH) bound as an alternative to Variational Bayes (VB) for approximate Bayesian inference. Unlike VB which typically involves maximization of a non-convex lower bound with respect to the variational parameters, the VH bound involves minimization of a convex upper bound to the intractable integral with respect to the variational parameters. Minimization of the VH bound is a convex optimization problem; hence the VH method can be applied using off-the-shelf convex optimization algorithms and the approximation error of the VH bound can also be analyzed using tools from convex optimization literature. 
+We present experiments on the task of integrating a truncated multivariate Gaussian distribution and compare our method to VB, EP and a state-of-the-art numerical integration method for this problem. 
+%\red{We present experiments on Bayesian probit regression and show that the parameter estimates obtained using the VH method closely approximate the parameter estimates obtained using the classic Albert and Chib auxiliary variable sampler.}
 \end{abstract} 
 
 
@@ -263,12 +265,12 @@ of potentials, possibly defined on a continuous space, unlike previous work focu
 only on the discrete case. Hence, our bound generalizes earlier work by \citet{liu11d} and is simpler in construction.  
 %We show that we can infer continuous latent variables values in a Bayesian inference problem using only two potentials: 
 % the first  is the prior distribution and the second is the likelihood term. 
-\red{We show that we can infer continuous latent variables values in a Bayesian inference problem where the unnormalized integral is a product of two potentials corresponding to the prior and likelihood respectively. The optimization with respect to the variational parameters in VH is a convex optimization problem and can be solved using off-the-shelf tools. We compare the performance of our method to VB on ...}
+{We show that we can infer continuous latent variables values in a Bayesian inference problem where the unnormalized integral is a product of two potentials corresponding to the prior and likelihood respectively. The optimization with respect to the variational parameters in VH is a convex optimization problem and can be solved using off-the-shelf tools. We compare the performance of our method to VB, EP and a state-of-the-art numerical optimizer on the task of integrating a truncated multivariate Gaussian distribution.}
 %the first  is the prior distribution and the second is the likelihood term. 
 
 
-\citep{hoffman2014stochastic}
-\citep{meltzer2009convergent}
+%\citep{hoffman2014stochastic}
+%\citep{meltzer2009convergent}
 
 \section{Variational \Holder bound}
 \label{sec:vh}
@@ -816,7 +818,87 @@ L &=  -\frac{1}{2}\trace(A \E{q}{\t\t\transp}) + \bm b\transp \E{q}{\t}  +\frac{
 
 
 %%%
-Table  here
+Table~\ref{tab:results}
+
+\begin{table}[h]
+\begin{center}
+\resizebox{0.5\textwidth}{!}{%
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+$\kappa$ & $D$ & Genz & EP & VB & VH \\
+\hline
+0.1&5&5.1499&5.1327&2.9489&6.4169\\%\hline
+1&5&0.41768&0.41234&0.10715&0.98725\\\hline
+0.1&20&24.7689&24.7702&17.5524&28.2854\\%\hline
+1&20&1.9203&1.9196&0.97199&2.8037\\\hline
+0.1&50&66.2055&66.1991&44.3699&68.971\\%\hline
+1&50&9.9&9.8999&5.9196&11.2919\\\hline
+\end{tabular}
+}
+%\end{center}
+%\end{table}
+%
+%\begin{table}[h]
+%\begin{center}
+\resizebox{0.45\textwidth}{!}{%
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+$\kappa$ & $D$ & VB vs EP & VH vs EP & VB vs VH \\
+\hline
+0.1&5&1.9286&0.35811&1.7518\\%\hline
+1&5&0.12856&0.073666&0.19735\\\hline
+0.1&20&3.0963&3.3148&2.9741\\%\hline
+1&20&0.19727&0.074579&0.27093\\\hline
+0.1&50&5.5944&0.72705&5.9132\\%\hline
+1&50&0.51551&0.076875&0.58154\\\hline
+\end{tabular}
+}
+\end{center}
+\caption{Comparison of log partition function (left) and error in first moment (right)}
+\label{tab:results}
+\end{table}
+
+
+
+%\begin{table}[h]
+%\begin{center}
+%\resizebox{0.45\textwidth}{!}{%
+%\begin{tabular}{|c|c|c|c|c|}
+%\hline
+%$\kappa$ & $D$ & VB vs EP & VH vs EP & VB vs VH \\
+%\hline
+%0.1&5&1.9286&0.35811&1.7518\\%\hline
+%1&5&0.12856&0.073666&0.19735\\\hline
+%0.1&20&3.1386&9.0743&10.6134\\%\hline
+%1&20&0.19727&0.074579&0.27093\\\hline
+%0.1&50&5.5944&0.72705&5.9132\\%\hline
+%1&50&0.51551&0.076875&0.58154\\\hline
+%\end{tabular}
+%}
+%%\end{center}
+%%\caption{Error in first moment}
+%%\end{table}
+%%\begin{table}[h]
+%%\begin{center}
+%\resizebox{0.45\textwidth}{!}{%
+%\begin{tabular}{|c|c|c|c|c|}
+%\hline
+%$\kappa$ & $D$ & VB vs EP & VH vs EP & VB vs VH \\
+%\hline
+%0.1&5&26.8584&11.1634&16.0101\\%\hline
+%1&5&2.4201&1.7695&0.70231\\\hline
+%0.1&20&121.9444&38038.4911&38028.151\\%\hline
+%1&20&11.5866&11.3471&0.74618\\\hline
+%0.1&50&312.3578&299.5287&14.6838\\%\hline
+%1&50&30.9008&30.7132&0.57631\\\hline
+%\end{tabular}
+%}
+%\end{center}
+%%\caption{Error in second moment}
+%\caption{Error in first moment (left) and second moment (right)}
+%\end{table}
+
+
 
 %%%
 
