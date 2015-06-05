@@ -828,7 +828,7 @@ Table~\ref{tab:results}
 \resizebox{0.5\textwidth}{!}{%
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
-$\kappa$ & $D$ & Genz & EP & VB & VH \\
+$\kappa$ & $n$ & Genz & EP & VB & VH \\
 \hline
 0.1&5&5.1499&5.1327&2.9489&6.4169\\%\hline
 1&5&0.41768&0.41234&0.10715&0.98725\\\hline
@@ -846,7 +846,7 @@ $\kappa$ & $D$ & Genz & EP & VB & VH \\
 \resizebox{0.45\textwidth}{!}{%
 \begin{tabular}{|c|c|c|c|c|}
 \hline
-$\kappa$ & $D$ & VB vs EP & VH vs EP & VB vs VH \\
+$\kappa$ & $n$ & VB vs EP & VH vs EP & VB vs VH \\
 \hline
 0.1&5&1.9286&0.35811&1.7518\\%\hline
 1&5&0.12856&0.073666&0.19735\\\hline
@@ -919,7 +919,7 @@ We varied the correlation by setting $\kappa\in\{0.1,1\}$ and the dimension by v
 We also compared the accuracy of the moment computation, since large gap in the bound does not always imply large difference in the results. The method of Genz did not output moments, so we also compared the accuracy of the moment computation by computing the Euclidean norm of the difference between the three methods: EP, VB and VH for the mean
 of the target distribution. % and the second order moment (a $n\times n$ positive definite matrix) The comparison of moments is shown of~\ref{tab:moments}.
 
- Table~\ref{tab:int} gives the results. The first 4 columns compare the integral values. We can see that VB correctly estimates a lower bound to the true integral, and that VG consistently gives an upper bound. EP seems to be generally very accurate, sometimes over-estimating, sometimes under-estimating the exact integral. An interesting phenomenon is that Holder is more accurate than VB in the high correlation setting ($\kappa=0.1$. This is expected since VB is unable to use correlation due to the fact that the 
+ Table~\ref{tab:results} gives the results. The first 4 columns compare the integral values. We can see that VB correctly estimates a lower bound to the true integral, and that VG consistently gives an upper bound. EP seems to be generally very accurate, sometimes over-estimating, sometimes under-estimating the exact integral. An interesting phenomenon is that Holder is more accurate than VB in the high correlation setting ($\kappa=0.1$. This is expected since VB is unable to use correlation due to the fact that the 
  approximating family is composed by independent truncated Gaussian variables.
 
 When comparing the moment computation, we see that Holder can give very accurate results, even if the gap in the bound was large. We also see that the higher the dimension, the better VH becomes with respect to VB. We also notice that the high correlation setting, VH and EP are closer to each other, compared to VB suggesting again, that high correlation are well handled by the VH approximation. 
@@ -1166,12 +1166,13 @@ one factor per possible spanning tree.
 
 
 
-
+\end{document}
 
 \renewcommand{\f}{f}
 \renewcommand{\g}{g}
 \renewcommand{\p}{p}
 \renewcommand{\q}{q}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
