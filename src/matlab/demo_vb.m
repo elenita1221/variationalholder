@@ -6,7 +6,7 @@ figure(1)
 clf;
 box = 0; % do we constraint the space to be the [-1 1]^d hypercube?
 d = 2; % dimension of the truncated Gaussian distribution to be integrated
-toprint = 0;%create pdf file with the figures at the end
+toprint = 1;%create pdf file with the figures at the end
 K = 3 %number of settings = number of rows in the plot
 
 for k=1:K % loop over 3 experiments
@@ -43,6 +43,7 @@ for k=1:K % loop over 3 experiments
         elseif k==3
             A =     [0.5    0.57;  0.57    1];
             b = [ 3.1; 4.3]
+            %b = A*[ 4.5; 6]
         end
         lims = [-1,-1;8 6];
     end
@@ -145,6 +146,7 @@ for k=1:K % loop over 3 experiments
     % initial_soln = [1./(diag(A)*0.1);b/2]; % sigma, followed by mu
     % sigma, followed by mu
     [final_soln,final_objfun_vb] = fminunc(objfun_vb,initial_soln,optimset('Display','iter','MaxFunEvals',10000,'TolX',1e-7));
+    -final_objfun_vb
     %final_soln = initial_soln;
     final_soln_sigma = final_soln(1:length(final_soln)/2);
     final_soln_mu = final_soln(length(final_soln)/2+1:length(final_soln));
