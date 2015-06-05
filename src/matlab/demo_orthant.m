@@ -4,7 +4,7 @@ figure(1)
 clf;
 box = 0; % do we constraint the space to be the [-1 1]^d hypercube?
 d = 2; % dimension of the truncated Gaussian distribution to be integrated
-toprint = 0;%create pdf file with the figures at the end
+toprint = 1;%create pdf file with the figures at the end
 K = 3 %number of settings = number of rows in the plot
 
 for k=1:K % loop over 3 experiments 
@@ -41,6 +41,9 @@ for k=1:K % loop over 3 experiments
         elseif k==3
             A =     [0.5    0.57;  0.57    1];
             b = [ 3.1; 4.3]
+            
+            % b = [ 2.7; 3.7]
+            %A\b
         end
         lims = [-1,-1;8 6];
     end
@@ -164,7 +167,8 @@ for k=1:K % loop over 3 experiments
     
     %% first plot: original function and the optimal variational function
     %figure(1);clf;axes('Position',[marg*1.9,marg,1-2.9*marg,1-(2+adjy*(k==1))*marg])
-    subplot(K,3,(k-1)*K+1)
+    n_col = 4;
+    subplot(K,n_col,(k-1)*n_col+1)
     contour(gx,gy,fg2plot,nc,'LineWidth',lw1,'LineStyle',fg_ls,'Color',fg_col);
     grid on
     hold on
@@ -186,7 +190,8 @@ for k=1:K % loop over 3 experiments
         end
     end
     if k==1
-        th=title(sprintf('function fg (black)\ntruncation (red)'));
+        %th=title(sprintf('function fg (black)\ntruncation (red)'));
+        th=title(sprintf('function \\gamma_1\\gamma_2 (black)\ntruncation (red)'));
         if toprint
             set(th,'fontsize',titsz)
         end
@@ -196,7 +201,7 @@ for k=1:K % loop over 3 experiments
     
     %% f.*r approximation
     %     figure(2);clf;axes('Position',[marg,marg,1-2*marg,1-(2+adjy*(k==1))*marg])
-    subplot(K,3,(k-1)*K+2)
+    subplot(K,n_col,(k-1)*n_col+2)
     contour(gx,gy,fg2plot,nc,'LineWidth',lw1,'LineStyle',fg_ls,'Color',fg_col);
     grid on
     hold on
@@ -211,9 +216,11 @@ for k=1:K % loop over 3 experiments
     [h,g] = contour(gx,gy,fr2plot,ncfr,'LineWidth',lw2,'Color',fr_col);
     line(mx_fr,my_fr,'Color',fr_col,'LineWidth',lw2,'LineStyle','none','Marker',approx_mk,'MarkerFaceColor',fr_col,'MarkerSize',ms);
     
-    xlabel(sprintf('p=%3.2f, log(I_f) = %3.2f',1/rho1,IfIg(1)),'fontsize',titsz)
+    %xlabel(sprintf('p=%3.2f, log(I_f) = %3.2f',1/rho1,IfIg(1)),'fontsize',titsz)
+   xlabel(sprintf('1/\\alpha_1=%1.2f',rho1),'fontsize',titsz)
     if k==1
-        th=title(['truncated approximation' newlinec 'f^pr^p (blue)']);
+        %th=title(['truncated approximation' newlinec 'f^pr^p (blue)']);
+        th=title(sprintf('Truncated approximation\n(\\gamma_1\\Psi)^{\\alpha_1} (blue)'));
         if toprint
             set(th,'fontsize',titsz)
         end
@@ -222,7 +229,7 @@ for k=1:K % loop over 3 experiments
     
     %% g.*r approximation
     %     figure(3);clf;axes('Position',[marg,marg,1-2*marg,1-(2+adjy*(k==1))*marg])
-    subplot(K,3,(k-1)*K+3)
+    subplot(K,n_col,(k-1)*n_col+3)
     contour(gx,gy,fg2plot,nc,'LineWidth',lw1,'LineStyle',fg_ls,'Color',fg_col);
     grid on
     hold on
@@ -236,23 +243,76 @@ for k=1:K % loop over 3 experiments
     [h,g] = contour(gx,gy,gr2plot,ncgr,'LineWidth',lw2,'Color',gr_col);
     line(mx_gr,my_gr,'Color',gr_col,'LineWidth',lw2,'LineStyle','none','Marker',approx_mk,'MarkerFaceColor',gr_col,'MarkerSize',ms);
     
-    xlabel(sprintf('q = %3.2f,log(I_g) = %3.2f',1/(1-rho1),IfIg(2)),'fontsize',titsz)
+  %  xlabel(sprintf('q = %3.2f,log(I_g) = %3.2f',1/(1-rho1),IfIg(2)),'fontsize',titsz)
+  xlabel(sprintf('1/\\alpha_2 = %1.2f',(1-rho1)),'fontsize',titsz)
     if k==1
-        th=title(['Gaussian approximation' newlinec 'g^qr^{-q} (green)']);
+        %th=title(['Gaussian approximation' newlinec 'g^qr^{-q} (green)']);
+       % th=title(['Gaussian approximation' newlinec '(\\gamma_2/\Psi)^{\\alpha_2} (green)']);
+      % th=title(['Gaussian approximation' newlinec '(\\gamma_2/\Psi)^{\\alpha_2} (green)']);
+      th=title(sprintf('Gaussian approximation\n(\\gamma_2/\\Psi)^{\\alpha_2} (green)'));
+    if toprint
+            set(th,'fontsize',titsz)
+        end
+    end
+    
+    
+    %% VB approximation
+
+        objfun_vb = @(t) negative_lower_bound_logpartition(params,t);
+    
+    Ainv = inv(params.A); mu_tmp = params.A\params.b;
+    initial_soln = [0.1*(diag(Ainv).^0.5); mu_tmp];
+    % initial_soln = [1./(diag(A)*0.1);b/2]; % sigma, followed by mu
+    % sigma, followed by mu
+    [final_soln,final_objfun_vb] = fminunc(objfun_vb,initial_soln,optimset('Display','iter','MaxFunEvals',10000,'TolX',1e-7));
+    final_soln_sigma = final_soln(1:length(final_soln)/2);
+    final_soln_mu = final_soln(length(final_soln)/2+1:length(final_soln));
+    holder_soln_sigma = 1./sqrt(theta1(1:end/2));
+    holder_soln_mu = theta1(end/2+1:end);
+   
+   val_approx_vb = truncnormpdf(gx(:), final_soln_mu(1), final_soln_sigma(1), 0) ...
+            .* truncnormpdf(gy(:), final_soln_mu(2), final_soln_sigma(2), 0);
+      vb2plot = reshape(val_approx_vb,size(gx));
+    maxivb = max(max(vb2plot));
+    ncvb = linspace(0,maxivb*1.01,5);
+    
+    subplot(K,4,(k-1)*n_col+4)
+    vb_col = [1 0 1]; 
+    contour(gx,gy,fg2plot,nc,'LineWidth',lw1,'LineStyle',fg_ls,'Color',fg_col);
+    grid on
+    hold on
+    line(mxstar,mystar,'Color',fg_col,'LineWidth',lw1/2,'LineStyle','none','Marker',fg_mk,'MarkerFaceColor',fg_col,'MarkerSize',ms);
+    
+    if box
+        line([-1 -1 1 1 -1],[-1 1 1 -1 -1],'Color','r','LineWidth',lw3,'LineStyle','-');
+    else
+        line([0 0 lims(2,1)],[lims(2,2) 0 0],'Color','r','LineWidth',lw3,'LineStyle','-');
+    end
+    
+    mx_vb = final_soln_mu(1); my_vb = final_soln_mu(2);
+    [h,g] = contour(gx,gy,vb2plot,ncvb,'LineWidth',lw2,'Color',vb_col);
+    line(mx_vb,my_vb,'Color',vb_col,'LineWidth',lw2,'LineStyle','none','Marker',approx_mk,'MarkerFaceColor',vb_col,'MarkerSize',ms);
+    
+      xlabel(sprintf('L = %.2f',-final_objfun_vb),'fontsize',titsz)
+   if k==1
+        th=title(['VB approximation']);
         if toprint
             set(th,'fontsize',titsz)
         end
     end
     
+    
+    
     if toprint
-        orient portrait
-        %set(findobj('Type','patch'),'LineWidth',4)
-        set(findobj('Type','Axes'),'FontSize',titsz)
-        gopts = {'-dpng'};
-        if box
-            print(gopts{:},['TruncGaussBox' num2str(k) '.pdf'])
-        else
-            print(gopts{:},['TruncGaussOrthant' num2str(k) '.pdf'])
-        end
+        % saveFigure('demo2d')
+%         orient portrait
+%         %set(findobj('Type','patch'),'LineWidth',4)
+%         set(findobj('Type','Axes'),'FontSize',titsz)
+%         gopts = {'-dpng'};
+%         if box
+%             print(gopts{:},['TruncGaussBox' num2str(k) '.pdf'])
+%         else
+%             print(gopts{:},['TruncGaussOrthant' num2str(k) '.pdf'])
+%         end
     end
 end

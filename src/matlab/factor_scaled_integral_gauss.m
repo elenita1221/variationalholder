@@ -9,15 +9,11 @@ else
     grad_prop = 0;
 end
 
-    
-    
+       
 d = size(params.A,1);
 Am = params.A + diag(theta(1:d));
 bm = params.b + theta(d+1:end);
-[f,gCell] = gauss_integral(...
-    Am/prop,...
-    bm/prop...
-    );
+[f,gCell] = gauss_integral(Am/prop, bm/prop);
 
 I_grad = [diag(gCell{1}); gCell{2}];
 I = prop * f;

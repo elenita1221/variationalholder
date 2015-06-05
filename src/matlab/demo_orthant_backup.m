@@ -1,15 +1,13 @@
 % demo_gaussian_univariate_integrals with orthants or box constraints
-clear all; close all; clc
-
 
 figure(1)
 clf;
 box = 0; % do we constraint the space to be the [-1 1]^d hypercube?
 d = 2; % dimension of the truncated Gaussian distribution to be integrated
-toprint = 1;%create pdf file with the figures at the end
+toprint = 0;%create pdf file with the figures at the end
 K = 3 %number of settings = number of rows in the plot
 
-for k=1:K % loop over 3 experiments
+for k=1:K % loop over 3 experiments 
     % The 3 settings show different values for Holder exponents p and q
     if box
         if k==1||k==3
@@ -28,7 +26,7 @@ for k=1:K % loop over 3 experiments
         if k==1
             b = A*[.5;.5];
         elseif k==2
-            b = A*[.8;.5];
+            b = A*[.8;.5];            
         elseif k==3
             b = A*[.2;0.1];
         end
@@ -43,15 +41,14 @@ for k=1:K % loop over 3 experiments
         elseif k==3
             A =     [0.5    0.57;  0.57    1];
             b = [ 3.1; 4.3]
-            %b = A*[ 4.5; 6]
         end
         lims = [-1,-1;8 6];
     end
     params.b = b;
     params.A = A;
     params.Achol = chol(A);
-    
-    
+
+            
     %log_step_func = @(t) cell2args({-1e10*real(t<0),0,[0]});
     if box
         log_step_func = @(t) -1e10*real(t<-1 | t>1);
@@ -60,9 +57,9 @@ for k=1:K % loop over 3 experiments
     end
     
     %first function: step function in each of the directions
-    log_f = @(t) log_step_func(t(:,1)) + log_step_func(t(:,2));
+    log_f = @(t) log_step_func(t(:,1)) + log_step_func(t(:,2)); 
     %second function: Correlated Gaussian
-    log_g = @(t) -.5*sum((t*params.Achol').^2,2) + t*b;
+    log_g = @(t) -.5*sum((t*params.Achol').^2,2) + t*b; 
     %pivot function: diagonal covariance Gaussian
     log_r = @(t,theta) -.5*sum((t.^2).*(ones(size(t,1),1)*theta(1:d)'),2) + t*theta(d+1:end);
     %    fg = {log_f,params};
@@ -90,18 +87,18 @@ for k=1:K % loop over 3 experiments
     
     res0 = [theta0;logodd(.5)];
     %res0 = [theta0];
-    
+     
     %objfun = @(t) upper_bound_logpartition(params,t(1:end-1),sigmoid(t(end)));
     objfun = @(t) upper_bound_logpartition(params,t);
     
     [res1,UBopt1] = fminunc(objfun,res0,optimset('Display','iter','MaxFunEvals',10000,'TolX',1e-7));
     
-    [UB1,~,IfIg] = upper_bound_logpartition(params,res1);
+   [UB1,~,IfIg] = upper_bound_logpartition(params,res1);
     
-    rho1 = sigmoid(res1(end)); %the first coefficient
-    theta1=res1(1:end-1);
+   rho1 = sigmoid(res1(end)); %the first coefficient
+   theta1=res1(1:end-1);
     
-    %   I_fr = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
+%   I_fr = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
     I_fr = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
     mx_fr = 1/I_fr*integral2(@(x,y) x.*reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
     my_fr = 1/I_fr*integral2(@(x,y) y.*reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
@@ -115,6 +112,7 @@ for k=1:K % loop over 3 experiments
     valr = exp(log_valr);
     val_approx_fr = valf.^(1./rho1)     .* valr.^(1./rho1);
     val_approx_gr = valg.^(1./(1-rho1)) ./ valr.^(1./(1-rho1));
+    
     
     ep=.00001;%nearly 0 so that the integral is a standard one \int{f*g}
     % if only the diagonal elements of A are used
@@ -134,38 +132,6 @@ for k=1:K % loop over 3 experiments
     UB1
     [Istar IDiago IGauss UB0 UB1 Ifr Igr]
     
-    % VB
-    use_simple_vb = 0;
-    if use_simple_vb
-        objfun_vb = @(t) negative_lower_bound_logpartition_simplevb(params,t);
-    else
-        objfun_vb = @(t) negative_lower_bound_logpartition(params,t);
-    end
-    Ainv = inv(params.A); mu_tmp = params.A\params.b;
-    initial_soln = [0.1*(diag(Ainv).^0.5); mu_tmp];
-    % initial_soln = [1./(diag(A)*0.1);b/2]; % sigma, followed by mu
-    % sigma, followed by mu
-    [final_soln,final_objfun_vb] = fminunc(objfun_vb,initial_soln,optimset('Display','iter','MaxFunEvals',10000,'TolX',1e-7));
-    -final_objfun_vb
-    %final_soln = initial_soln;
-    final_soln_sigma = final_soln(1:length(final_soln)/2);
-    final_soln_mu = final_soln(length(final_soln)/2+1:length(final_soln));
-    holder_soln_sigma = 1./sqrt(theta1(1:end/2))
-    holder_soln_mu = theta1(end/2+1:end)
-    disp('VB soln')
-    [final_soln_sigma, final_soln_mu]
-    disp('Holder soln')
-    [holder_soln_sigma, holder_soln_mu]
-    %pause
-    
-    
-    if use_simple_vb
-        val_approx_vb = normpdf(gx(:), final_soln_mu(1), final_soln_sigma(1)) ...
-            .* normpdf(gy(:), final_soln_mu(2), final_soln_sigma(2));
-    else
-        val_approx_vb = truncnormpdf(gx(:), final_soln_mu(1), final_soln_sigma(1), 0) ...
-            .* truncnormpdf(gy(:), final_soln_mu(2), final_soln_sigma(2), 0);
-    end
     %% plots
     
     marg=.05;
@@ -179,7 +145,6 @@ for k=1:K % loop over 3 experiments
     r_col = 'k';
     fr_col = [.2 .2 1];
     gr_col = [.2 1 .2];
-    vb_col = [1 0 1];%[.2 1 .2];
     ms = 15;
     adjy = 2;
     titsz = 10;
@@ -194,14 +159,11 @@ for k=1:K % loop over 3 experiments
     ncfr = linspace(0,maxifr*1.01,5);
     maxigr = max(max(gr2plot));
     ncgr = linspace(0,maxigr*1.01,5);
-    vb2plot = reshape(val_approx_vb,size(gx));
-    maxivb = max(max(vb2plot));
-    ncvb = linspace(0,maxivb*1.01,5);
+    
+    
     %% first plot: original function and the optimal variational function
     %figure(1);clf;axes('Position',[marg*1.9,marg,1-2.9*marg,1-(2+adjy*(k==1))*marg])
-    %subplot(K,4,(k-1)*K+1)
-    n_col = 4;
-    subplot(K,4,(k-1)*n_col+1)
+    subplot(K,3,(k-1)*K+1)
     contour(gx,gy,fg2plot,nc,'LineWidth',lw1,'LineStyle',fg_ls,'Color',fg_col);
     grid on
     hold on
@@ -231,9 +193,9 @@ for k=1:K % loop over 3 experiments
     
     xlabel(sprintf('log(Z) = %3.2f < %3.2f%s%3.2f',Istar,IfIg(1),repmat('+',IfIg(2)>0),IfIg(2)),'fontsize',titsz);
     
-    
-    %         %% VB approximation
-    subplot(K,4,(k-1)*n_col+4)
+    %% f.*r approximation
+    %     figure(2);clf;axes('Position',[marg,marg,1-2*marg,1-(2+adjy*(k==1))*marg])
+    subplot(K,3,(k-1)*K+2)
     contour(gx,gy,fg2plot,nc,'LineWidth',lw1,'LineStyle',fg_ls,'Color',fg_col);
     grid on
     hold on
@@ -245,78 +207,51 @@ for k=1:K % loop over 3 experiments
         line([0 0 lims(2,1)],[lims(2,2) 0 0],'Color','r','LineWidth',lw3,'LineStyle','-');
     end
     
-    mx_vb = final_soln_mu(1); my_vb = final_soln_mu(2);
-    [h,g] = contour(gx,gy,vb2plot,ncvb,'LineWidth',lw2,'Color',vb_col);
-    line(mx_vb,my_vb,'Color',vb_col,'LineWidth',lw2,'LineStyle','none','Marker',approx_mk,'MarkerFaceColor',vb_col,'MarkerSize',ms);
+    [h,g] = contour(gx,gy,fr2plot,ncfr,'LineWidth',lw2,'Color',fr_col);
+    line(mx_fr,my_fr,'Color',fr_col,'LineWidth',lw2,'LineStyle','none','Marker',approx_mk,'MarkerFaceColor',fr_col,'MarkerSize',ms);
     
-    %     xlabel(sprintf('p=%3.2f, log(I_f) = %3.2f',1/rho1,IfIg(1)),'fontsize',titsz)
+    xlabel(sprintf('p=%3.2f, log(I_f) = %3.2f',1/rho1,IfIg(1)),'fontsize',titsz)
     if k==1
-        th=title(['VB approximation']);
+        th=title(['truncated approximation' newlinec 'f^pr^p (blue)']);
         if toprint
             set(th,'fontsize',titsz)
         end
     end
     
     
-    %     %% f.*r approximation
-    %     %     figure(2);clf;axes('Position',[marg,marg,1-2*marg,1-(2+adjy*(k==1))*marg])
-    %     subplot(K,4,(k-1)*n_col+2)
-    %     contour(gx,gy,fg2plot,nc,'LineWidth',lw1,'LineStyle',fg_ls,'Color',fg_col);
-    %     grid on
-    %     hold on
-    %     line(mxstar,mystar,'Color',fg_col,'LineWidth',lw1/2,'LineStyle','none','Marker',fg_mk,'MarkerFaceColor',fg_col,'MarkerSize',ms);
-    %
-    %     if box
-    %         line([-1 -1 1 1 -1],[-1 1 1 -1 -1],'Color','r','LineWidth',lw3,'LineStyle','-');
-    %     else
-    %         line([0 0 lims(2,1)],[lims(2,2) 0 0],'Color','r','LineWidth',lw3,'LineStyle','-');
-    %     end
-    %
-    %     [h,g] = contour(gx,gy,fr2plot,ncfr,'LineWidth',lw2,'Color',fr_col);
-    %     line(mx_fr,my_fr,'Color',fr_col,'LineWidth',lw2,'LineStyle','none','Marker',approx_mk,'MarkerFaceColor',fr_col,'MarkerSize',ms);
-    %
-    %     xlabel(sprintf('p=%3.2f, log(I_f) = %3.2f',1/rho1,IfIg(1)),'fontsize',titsz)
-    %     if k==1
-    %         th=title(['truncated approximation' newlinec 'f^pr^p (blue)']);
-    %         if toprint
-    %             set(th,'fontsize',titsz)
-    %         end
-    %     end
-    %
-    %
-    %     %% g.*r approximation
-    %     %     figure(3);clf;axes('Position',[marg,marg,1-2*marg,1-(2+adjy*(k==1))*marg])
-    %     subplot(K,4,(k-1)*n_col+3)
-    %     contour(gx,gy,fg2plot,nc,'LineWidth',lw1,'LineStyle',fg_ls,'Color',fg_col);
-    %     grid on
-    %     hold on
-    %     line(mxstar,mystar,'Color',fg_col,'LineWidth',lw1/2,'LineStyle','none','Marker',fg_mk,'MarkerFaceColor',fg_col,'MarkerSize',ms);
-    %
-    %     if box
-    %         line([-1 -1 1 1 -1],[-1 1 1 -1 -1],'Color','r','LineWidth',lw3,'LineStyle','-');
-    %     else
-    %         line([0 0 lims(2,1)],[lims(2,2) 0 0],'Color','r','LineWidth',lw3,'LineStyle','-');
-    %     end
-    %     [h,g] = contour(gx,gy,gr2plot,ncgr,'LineWidth',lw2,'Color',gr_col);
-    %     line(mx_gr,my_gr,'Color',gr_col,'LineWidth',lw2,'LineStyle','none','Marker',approx_mk,'MarkerFaceColor',gr_col,'MarkerSize',ms);
-    %
-    %     xlabel(sprintf('q = %3.2f,log(I_g) = %3.2f',1/(1-rho1),IfIg(2)),'fontsize',titsz)
-    %     if k==1
-    %         th=title(['Gaussian approximation' newlinec 'g^qr^{-q} (green)']);
-    %         if toprint
-    %             set(th,'fontsize',titsz)
-    %         end
-    %     end
-    %
-    %     if toprint
-    %         orient portrait
-    %         %set(findobj('Type','patch'),'LineWidth',4)
-    %         set(findobj('Type','Axes'),'FontSize',titsz)
-    %         gopts = {'-dpng'};
-    %         if box
-    %             print(gopts{:},['TruncGaussBox' num2str(k) '.pdf'])
-    %         else
-    %             print(gopts{:},['TruncGaussOrthant' num2str(k) '.pdf'])
-    %         end
-    %     end
+    %% g.*r approximation
+    %     figure(3);clf;axes('Position',[marg,marg,1-2*marg,1-(2+adjy*(k==1))*marg])
+    subplot(K,3,(k-1)*K+3)
+    contour(gx,gy,fg2plot,nc,'LineWidth',lw1,'LineStyle',fg_ls,'Color',fg_col);
+    grid on
+    hold on
+    line(mxstar,mystar,'Color',fg_col,'LineWidth',lw1/2,'LineStyle','none','Marker',fg_mk,'MarkerFaceColor',fg_col,'MarkerSize',ms);
+    
+    if box
+        line([-1 -1 1 1 -1],[-1 1 1 -1 -1],'Color','r','LineWidth',lw3,'LineStyle','-');
+    else
+        line([0 0 lims(2,1)],[lims(2,2) 0 0],'Color','r','LineWidth',lw3,'LineStyle','-');
+    end
+    [h,g] = contour(gx,gy,gr2plot,ncgr,'LineWidth',lw2,'Color',gr_col);
+    line(mx_gr,my_gr,'Color',gr_col,'LineWidth',lw2,'LineStyle','none','Marker',approx_mk,'MarkerFaceColor',gr_col,'MarkerSize',ms);
+    
+    xlabel(sprintf('q = %3.2f,log(I_g) = %3.2f',1/(1-rho1),IfIg(2)),'fontsize',titsz)
+    if k==1
+        th=title(['Gaussian approximation' newlinec 'g^qr^{-q} (green)']);
+        if toprint
+            set(th,'fontsize',titsz)
+        end
+    end
+    
+    if toprint
+        orient portrait
+        %set(findobj('Type','patch'),'LineWidth',4)
+        set(findobj('Type','Axes'),'FontSize',titsz)
+        gopts = {'-dpng'};
+        if box
+            print(gopts{:},['TruncGaussBox' num2str(k) '.pdf'])
+        else
+            print(gopts{:},['TruncGaussOrthant' num2str(k) '.pdf'])
+        end
+    end
 end
