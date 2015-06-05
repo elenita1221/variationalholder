@@ -92,6 +92,7 @@ for k=1:K % loop over 3 experiments
     objfun = @(t) upper_bound_logpartition(params,t);
     
     [res1,UBopt1] = fminunc(objfun,res0,optimset('Display','iter','MaxFunEvals',10000,'TolX',1e-7));
+    checkderivatives(objfun
     
    [UB1,~,IfIg] = upper_bound_logpartition(params,res1);
     
