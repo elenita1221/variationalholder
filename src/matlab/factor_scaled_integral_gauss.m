@@ -1,4 +1,4 @@
-function [I,I_grad] = factor_scaled_integral_gauss(params,theta,prop)
+function [I,I_grad,m,v] = factor_scaled_integral_gauss(params,theta,prop)
 
 
 if nargin<=2
@@ -22,3 +22,8 @@ if grad_prop
     I_grad_prop = dprop * (f - (sum(sum(gCell{1}.*Am)) + gCell{2}'*bm) / prop);
     I_grad = [I_grad; I_grad_prop];
 end
+
+if nargout>2 % we also want the mean
+    m = Am \ bm;
+end
+    

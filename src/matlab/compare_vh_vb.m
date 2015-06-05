@@ -16,8 +16,8 @@ for d = d_values
                 num = num + 1;
                 fprintf('\nExperiment %d\nd=%d\nk=%d\nc=%d\nkappa=%3.2f\n',num,d,k,c,kappa)
                 params = make_expt_params(d,k,c,kappa);
-   
-                log_step_func = @(t) -1e10*real(t<0);                
+                
+                log_step_func = @(t) -1e10*real(t<0);
                 %first function: step function in each of the directions
                 log_f = @(t) log_step_func(t(:,1)) + log_step_func(t(:,2));
                 %second function: Correlated Gaussian
@@ -37,12 +37,12 @@ for d = d_values
                 if d == 2
                     % optimal integral
                     Istar = log(integral2(@(x,y) reshape(exp(log_f([x(:) y(:)])+log_g([x(:) y(:)])),size(x)),-inf,inf,-inf,inf));
-                  % exact first moment in each of the dimension
+                    % exact first moment in each of the dimension
                     mxstar = exp(-Istar)*integral2(@(x,y) x.*reshape(exp(log_f([x(:) y(:)])+log_g([x(:) y(:)])),size(x)),-inf,inf,-inf,inf);
                     mystar = exp(-Istar)*integral2(@(x,y) y.*reshape(exp(log_f([x(:) y(:)])+log_g([x(:) y(:)])),size(x)),-inf,inf,-inf,inf);
                 else
-                % compute optimal integral using Metropolis-Hastings
-                
+                    % compute optimal integral using Metropolis-Hastings
+                    
                 end
                 
                 %% VH bound
@@ -50,8 +50,8 @@ for d = d_values
                 res0 = [theta0;logodd(.5)];
                 objfun = @(t) upper_bound_logpartition(params,t);
                 
-                  UB0 = upper_bound_logpartition(params,res0);
-%                fprintf('The exact integral is %4.3f\n', Istar)
+                UB0 = upper_bound_logpartition(params,res0);
+                %                fprintf('The exact integral is %4.3f\n', Istar)
                 %fprintf('The variational holder bound gives %4.3f for the initial pivot function with parameters %s', UB0, num2str(theta0))
                 
                 
@@ -59,35 +59,42 @@ for d = d_values
                 
                 [UB1,~,IfIg] = upper_bound_logpartition(params,res1);
                 
+                res1(end)=5;
                 rho1 = sigmoid(res1(end)); %the first coefficient
                 theta1=res1(1:end-1);
-                I_fr1 = ???;
+                [I_gr,~, m_gr] = factor_scaled_integral_gauss(params, -res1);
+                
                 if d == 2
                     %   I_fr = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
-                    I_fr2 = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
-                    [I_fr1 I_fr2] 
-                    ddd
-             
-                    mx_fr = 1/I_fr*integral2(@(x,y) x.*reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
-                    my_fr = 1/I_fr*integral2(@(x,y) y.*reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
+                    I_fr2 = integral2(@(x,y) reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);                    
+                    I_gr2 = integral2(@(x,y) reshape(exp(1./(1-rho1)*log_g([x(:) y(:)])-1./(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
+                    m_fr2 = [1/I_fr2*integral2(@(x,y) x.*reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);...
+                        1/I_fr2*integral2(@(x,y) y.*reshape(exp(1./rho1*log_f([x(:) y(:)])+1./rho1*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf)];
+                    m_gr2 = [1/I_gr2*integral2(@(x,y) x.*reshape(exp(1./(1-rho1)*log_g([x(:) y(:)])-1./(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);...
+                        1/I_gr2*integral2(@(x,y) y.*reshape(exp(1./(1-rho1)*log_g([x(:) y(:)])-1./(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf)];
+
+
+                    [I_gr log(I_gr2/(1-rho1))] %debug
+
+                    [m_gr m_gr2]%debug
+                    ddd%debug
                     
-                    
-                    I_gr = integral2(@(x,y) reshape(exp(1./(1-rho1)*log_g([x(:) y(:)])-1./(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
-                    mx_gr = 1/I_gr*integral2(@(x,y) x.*reshape(exp(1./(1-rho1)*log_g([x(:) y(:)])-1./(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
-                    my_gr = 1/I_gr*integral2(@(x,y) y.*reshape(exp(1./(1-rho1)*log_g([x(:) y(:)])-1./(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf);
+                    [I_gr1 I_gr2]% debug
+                    ddd%debug
+
                 end
                 
-%                 Ifr = factor_scaled_integral_univ({log_step_func, log_step_func},theta1,1-ep,1/ep);
-%                 
-%                 % correlated gaussian without truncation
-%                 params_gr.A = params.A + diag(theta1(1:d));
-%                 params_gr.b = params.b + theta1(d+1:end)
-%                 
-%                 Igr = factor_scaled_integral_gauss(params_gr,zeros(d*2,1),1-ep);
-%                 
-%                 UB1
-%                 [Istar IDiago IGauss UB0 UB1 Ifr Igr]
-%                 
+                %                 Ifr = factor_scaled_integral_univ({log_step_func, log_step_func},theta1,1-ep,1/ep);
+                %
+                %                 % correlated gaussian without truncation
+                %                 params_gr.A = params.A + diag(theta1(1:d));
+                %                 params_gr.b = params.b + theta1(d+1:end)
+                %
+                %                 Igr = factor_scaled_integral_gauss(params_gr,zeros(d*2,1),1-ep);
+                %
+                %                 UB1
+                %                 [Istar IDiago IGauss UB0 UB1 Ifr Igr]
+                %
                 
                 
                 %% VB approximation
@@ -102,8 +109,8 @@ for d = d_values
                 final_soln_mu = final_soln(length(final_soln)/2+1:length(final_soln));
                 holder_soln_sigma = 1./sqrt(theta1(1:end/2));
                 holder_soln_mu = theta1(end/2+1:end);
-                mx_vb = final_soln_mu(1); 
-                my_vb = final_soln_mu(2);                                
+                mx_vb = final_soln_mu(1);
+                my_vb = final_soln_mu(2);
             end
         end
     end
