@@ -672,6 +672,34 @@ Figure~\ref{fig:TruncatedGauss} presents results on a two dimensional truncated 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{VARIATIONAL HOLDER VS.~VARIATIONAL BAYES}
+\section{Comparison with Variational Bayes}
+
+\subsection{Variational \Holder vs.~Variational Bayes}
+One can compare the VH inequality~(\ref{eq:VH-logspace}) to the one provided by the \emph{Variational Bayes} 
+(VB) inequality:
+\begin{align}
+\log\I^*
+\ge 
+\int \log\gamma_1(\z) dq(\z) + 
+\int \log\gamma_2(\z) dq(\z) +
+\mathcal{H}(Q)
+\enspace.
+\label{eq:VB-logspace}
+\end{align}
+for any distribution $Q$ absolutely continuous with respect to $\nu$, where $\mathcal{H}$ denotes the information entropy and $q=\frac{dQ}{d\nu}$. 
+
+VB provides a lower bound to the log-sum-exp function, while the VH provides an upper bound. One disadvantage
+ of the VB bound~(\ref{eq:VB-logspace}) is that it is not concave in general, 
+leading to objective functions that are difficult to maximize and a bound that
+does not come with theoretical guarantees. Another disadvantage is that the approximating
+distribution $Q$ must have a support included in the base distribution $\nu$, which is not 
+always convenient when the target distribution has subspaces with zero probability. 
+This \emph{zero-avoiding} effect of the VB bound can lead to 
+crude approximations of the original integral~\citep{minka2005divergence}.
+%e.g. when distributions have zero probability on some subsets of the space.
+
+
 
 \subsection{Variational Bayes for truncated multi-variate Gaussian integration}
 As a comparison, we consider in this section the VB approach, that gives a lower bound to the likelihood. The key idea to be able to apply VB on this problem is to consider independent truncated Gaussian for the approximation family. We start with \eqref{univ-gaussian-integral}: 
@@ -821,7 +849,6 @@ gradient descent technique to find the optimal variational parameters.
 
 
 %%%
-Table~\ref{tab:results}
 
 \begin{table}[h]
 \begin{center}
@@ -1070,8 +1097,7 @@ When comparing the moment computation, we see that Holder can give very accurate
 
 \section{Generalization for many factors}
 \label{many-factor}
-In the previous section, we showed that probit regression can be interpreted as the product of two tractable functions. In this 
-section, we consider the more general case where the integral to compute is the product of $K$ factors, $K>2$:
+Here, we consider the more general case where the integral to compute is the product of $K$ factors, $K>2$:
 $\I^*:=\int \prod_{k'=1}^K f_k(\z) d\basem(\z)$ where $f_k$, $k=1,\cdots, K$ are the individual factors.
 %Let us define a non-negative pivot function as the product of per-potential pivot function $\Psi(\t):=\prod_{k=1}^K \Psi_k(\t)$. 
 We have the following results:
@@ -1101,32 +1127,6 @@ to the pivot functions $\Psi_k$ and $\balpha$.
 Tightness and approximation properties studied in Section~3
 can also be extended to the case of multiple factors.
 
-%\section{VARIATIONAL HOLDER VS.~VARIATIONAL BAYES}
-\section{Variational \Holder vs.~Variational Bayes}
-One can compare the VH inequality~(\ref{eq:VH-logspace}) to the one provided by the \emph{Variational Bayes} 
-(VB) inequality:
-\begin{align}
-\log\I^*
-\ge 
-\int \log\gamma_1(\z) dq(\z) + 
-\int \log\gamma_2(\z) dq(\z) +
-\mathcal{H}(Q)
-\enspace.
-\label{eq:VB-logspace}
-\end{align}
-for any distribution $Q$ absolutely continuous with respect to $\nu$, where $\mathcal{H}$ denotes the information entropy and $q=\frac{dQ}{d\nu}$. 
-
-VB provides a lower bound to the log-sum-exp function, while the VH provides an upper bound. One disadvantage
- of the VB bound~(\ref{eq:VB-logspace}) is that it is not concave in general, 
-leading to objective functions that are difficult to maximize and a bound that
-does not come with theoretical guarantees. Another disadvantage is that the approximating
-distribution $Q$ must have a support included in the base distribution $\nu$, which is not 
-always convenient when the target distribution has subspaces with zero probability. 
-This \emph{zero-avoiding} effect of the VB bound can lead to 
-crude approximations of the original integral~\citep{minka2005divergence}.
-%e.g. when distributions have zero probability on some subsets of the space.
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
@@ -1135,11 +1135,10 @@ minimization of an upper bound to the log-partition function. We demonstrated th
 the variational inference problem is convex if the variational function is log-linear, 
 which has great practical and theoretical advantages over mean-field/VB approximations,
 which is the main approach used today by practitioners. We also provide a novel way to
-handle sparse regression in GLMs. In fact, we focused on probit regression, but the extension to
-other losses is easy. One of the unique feature of this approach is that
-the sparse factors might be heavy tails, but we still maintaining
+handle Gaussian integration problems. In fact, we could express probit regression as a special case of this problem, and the extension to other distribution is possible in theory. One of the unique feature of this approach is that
+the approximation maintains the heavy tails, but we still
 a convex objective. Further experiments will be conducted to evaluate how good this 
-approximation behaves in very sparse models. 
+approximation behaves in Bayesian posterior estimation. 
 
 The VH framework presented here is very general, and can be applied to many models and
 optimized using a large variety of algorithms and speedup tricks, similarly to what happened 
