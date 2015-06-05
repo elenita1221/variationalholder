@@ -1,4 +1,4 @@
-function [I,I_grad] = factor_scaled_integral_orthant(theta,rho)
+function [I,I_grad,m,m2] = factor_scaled_integral_orthant(theta,rho)
 % factor_scaled_integral_orthant
 % Integral of a diagonal covariance Gaussian restricted to the positive orthant
 
@@ -51,4 +51,8 @@ if nargout>1
             (.5 * d / rho + sum(dlogphi_drho) + .5*sum(dc_drho));
         I_grad = [I_grad;drho * I_grad_rho];
     end
+end
+if nargout>2 % we also want the mean
+    [m, m2] = truncnorm_moments(theta(:,2)./theta(:,1), 1./sqrt(theta(:,1)/rho));
+    m2 = diag(m2);
 end

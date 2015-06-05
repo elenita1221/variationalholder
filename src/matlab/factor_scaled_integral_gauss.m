@@ -1,4 +1,4 @@
-function [I,I_grad,m,v] = factor_scaled_integral_gauss(params,theta,prop)
+function [I,I_grad,m, m2] = factor_scaled_integral_gauss(params,theta,prop)
 
 
 if nargin<=2
@@ -25,5 +25,8 @@ end
 
 if nargout>2 % we also want the mean
     m = Am \ bm;
+end
+if nargout>3 % we also want the second moment
+    m2 = inv(Am/prop) + m*m';
 end
     

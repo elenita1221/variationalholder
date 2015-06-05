@@ -18,7 +18,7 @@ else
     Ainvb = A\b;
     J = d/2*log(2*pi) - .5*sum(log(eigv)) + .5*b'*Ainvb;
     if nargout>1
-%        Jgrad = {diag(-.5 * inv(A) - .5 * Ainvb*Ainvb'), Ainvb};
+        %        Jgrad = {diag(-.5 * inv(A) - .5 * Ainvb*Ainvb'), Ainvb};
         %eigvec
         Jgrad = {-.5 * (eigvec * diag(1./eigv) * eigvec' + Ainvb * Ainvb'), Ainvb};
     end
