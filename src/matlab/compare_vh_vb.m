@@ -59,7 +59,9 @@ for d = d_values
                 
                 [UB1,~,IfIg] = upper_bound_logpartition(params,res1);
                 
-                res1(end)=5;
+                res1(end)=0;
+                A=eye(2);
+                b = [0;0];
                 rho1 = sigmoid(res1(end)); %the first coefficient
                 theta1=res1(1:end-1);
                 [I_gr,~, m_gr] = factor_scaled_integral_gauss(params, -res1);
@@ -74,7 +76,7 @@ for d = d_values
                         1/I_gr2*integral2(@(x,y) y.*reshape(exp(1./(1-rho1)*log_g([x(:) y(:)])-1./(1-rho1)*log_r([x(:) y(:)],theta1)),size(x)),-inf,inf,-inf,inf)];
 
 
-                    [I_gr log(I_gr2/(1-rho1))] %debug
+                    [I_gr log(I_gr2*(1-rho1))] %debug
 
                     [m_gr m_gr2]%debug
                     ddd%debug
