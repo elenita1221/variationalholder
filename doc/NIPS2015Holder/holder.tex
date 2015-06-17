@@ -1,5 +1,17 @@
-\documentclass{article} % For LaTeX2e
-\usepackage{nips15submit_e,times}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% arxiv
+\documentclass[reqno,oneside,letterpaper,10pt]{article}
+\usepackage[utf8]{inputenc} 
+\pdfoutput=1        
+%set paper width
+\usepackage{fullpage}
+%\usepackage[textwidth=142mm,textheight=214mm]{geometry} % used in MF paper
+\usepackage[textwidth=146mm,textheight=214mm]{geometry} % 
+
+% nips
+%\documentclass{article} % For LaTeX2e
+%\usepackage{nips15submit_e,times}
+
 
 %\usepackage{proceed2e}
 \usepackage[utf8]{inputenc} 
@@ -140,75 +152,64 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% ----- arxiv: start -------
+\begin{document}
+
 \title{Approximate Inference with the Variational \Holder Bound}
+\date{}
 
 
-% The \author macro works with any number of authors. There are two commands
-% used to separate the names and addresses of multiple authors: \And and \AND.
-%
-% Using \And between authors leaves it to \LaTeX{} to determine where to break
-% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
-% puts 3 of 4 authors names on the first line, and the last on the second
-% line, try using \AND instead of \And before the third author name.
-%
-%\author{
-%David S.~Hippocampus\thanks{ Use footnote for providing further information
-%about author (webpage, alternative address)---\emph{not} for acknowledging
-%funding agencies.} \\
-%Department of Computer Science\\
-%Cranberry-Lemon University\\
-%Pittsburgh, PA 15213 \\
-%\texttt{hippo@cs.cranberry-lemon.edu} \\
-%\And
-%Coauthor \\
-%Affiliation \\
-%Address \\
-%\texttt{email} \\
-%\AND
-%Coauthor \\
-%Affiliation \\
-%Address \\
-%\texttt{email} \\
-%\And
-%Coauthor \\
-%Affiliation \\
-%Address \\
-%\texttt{email} \\
-%\And
-%Coauthor \\
-%Affiliation \\
-%Address \\
-%\texttt{email} \\
-%(if needed)\\
-%}
-
-\author{ { Guillaume Bouchard} \\
-Xerox Research Centre Europe\\
-\href{guillaume.bouchard@xerox.com}{\nolinkurl{guillaume.bouchard@xerox.com}} \\
-\And
-{\bf Balaji Lakshminarayanan}  \\
-Gatsby Unit, University College London          \\
+%% arxiv ARTICLE style
+\author{ Guillaume Bouchard \\
+Department of Computer Science\\ University College London\\
+\href{guillaume.m.bouchard@gmail.com}{\nolinkurl{guillaume.m.bouchard@gmail.com}} \\
+\and
+Balaji Lakshminarayanan  \\
+Gatsby Unit\\ University College London          \\
 \href{balaji@gatsby.ucl.ac.uk}{\nolinkurl{balaji@gatsby.ucl.ac.uk}}
 }
 
-
-
-\newcommand{\fix}{\marginpar{FIX}}
-\newcommand{\new}{\marginpar{NEW}}
-
-\nipsfinalcopy % Uncomment for camera-ready version
-
-\begin{document}
-
-
 \maketitle
 
+
 \begin{abstract} 
-%This paper introduces the Variational Holder bound as an convex alternative to Variational Bayes, and applies it to the problem of Bayesian probit regression. 
 We introduce the Variational \Holder (VH) bound as an alternative to Variational Bayes (VB) for approximate Bayesian inference. Unlike VB which typically involves maximization of a non-convex lower bound with respect to the variational parameters, the VH bound involves minimization of a convex upper bound to the intractable integral with respect to the variational parameters. Minimization of the VH bound is a convex optimization problem; hence the VH method can be applied using off-the-shelf convex optimization algorithms and the approximation error of the VH bound can also be analyzed using tools from convex optimization literature. 
 We present experiments on the task of integrating a truncated multivariate Gaussian distribution and compare our method to VB, EP and a state-of-the-art numerical integration method for this problem. 
 %\red{We present experiments on Bayesian probit regression and show that the parameter estimates obtained using the VH method closely approximate the parameter estimates obtained using the classic Albert and Chib auxiliary variable sampler.}
 \end{abstract} 
+% --- arxiv: end ----
+
+
+%%% ----- nips: start -------
+%\title{Approximate Inference with the Variational \Holder Bound}
+%
+%\author{ { Guillaume Bouchard} \\
+%Dept of CS, University College London\\
+%\href{guillaume.m.bouchard@gmail.com}{\nolinkurl{guillaume.m.bouchard@gmail.com}} \\
+%\And
+%{\bf Balaji Lakshminarayanan}  \\
+%Gatsby Unit, University College London          \\
+%\href{balaji@gatsby.ucl.ac.uk}{\nolinkurl{balaji@gatsby.ucl.ac.uk}}
+%}
+%
+%
+%
+%\newcommand{\fix}{\marginpar{FIX}}
+%\newcommand{\new}{\marginpar{NEW}}
+%
+%%\nipsfinalcopy % Uncomment for camera-ready version
+%
+%\begin{document}
+%
+%
+%\maketitle
+%
+%\begin{abstract} 
+%We introduce the Variational \Holder (VH) bound as an alternative to Variational Bayes (VB) for approximate Bayesian inference. Unlike VB which typically involves maximization of a non-convex lower bound with respect to the variational parameters, the VH bound involves minimization of a convex upper bound to the intractable integral with respect to the variational parameters. Minimization of the VH bound is a convex optimization problem; hence the VH method can be applied using off-the-shelf convex optimization algorithms and the approximation error of the VH bound can also be analyzed using tools from convex optimization literature. 
+%We present experiments on the task of integrating a truncated multivariate Gaussian distribution and compare our method to VB, EP and a state-of-the-art numerical integration method for this problem. 
+%%\red{We present experiments on Bayesian probit regression and show that the parameter estimates obtained using the VH method closely approximate the parameter estimates obtained using the classic Albert and Chib auxiliary variable sampler.}
+%\end{abstract} 
+%%%% ----- nips: end -------
 
 
 \section{Introduction}
@@ -1491,249 +1492,249 @@ Apply Theorem~\ref{th:approx0} with $f:=\gamma_1\Psi$, $\g:=\gamma_2/\Psi$, $\p:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\clearpage
-
-\section{Bayesian Logistic Regression}
-\label{sec:logreg}
-
-Let $\bX\in\Re^{N\times D}$ a design matrix\footnote{The matrix $X$ contains features, possibly including a constant non-zero feature if the model includes an intercept parameter.} with rows\footnote{We will assume all the vectors (e.g. $x, \bbeta$) are column vectors.} $\bx_1\transp,\ldots, \bx_N\transp$ in $\Re^D$ and $\y\in\{-1,1\}^N$ the target values of a linear logistic regression model. Let $\D=\{\bX, \y\}$. 
-Denoting by $\bbeta\in\Re^D$ the vector of parameters, the likelihood is:
-$$ p(\y|\bbeta, \bX) = \prod_{n=1}^N \sigma(y_n \bx_n\transp \bbeta)$$
-where  $\sigma:\Re\mapsto [0,1]$ % $\sigma:\Re\mapsto \Re$
- is the sigmoid $\sigma(\phi):=\frac{1}{1+e^{-\phi}}$.
-Using a Gaussian prior $\normdist(\bbeta|\mu_0, \Sigma_0)$ we want to approximate the posterior over $\bbeta$:
-\begin{align}
-\label{eq:posterior}
- p(\bbeta|\D) \propto \normdist(\bbeta|\mu_0, \Sigma_0) \prod_{n=1}^N \sigma(y_n \bx_n\transp \bbeta).
-\end{align}
- 
-\section{Polya-Gamma distribution}
-\label{sec:pg}
-The Polya-Gamma distribution is a two-parameter univariate distribution.  
-%that can recover the sigmoid likelihood when marginalized.
-\citet{polson2013bayesian} showed that the sigmoid function can be represented 
-as a mixture of Gaussians with respect to a Polya-Gamma distribution.  
-%The core inequality is:
+%\clearpage
+%
+%\section{Bayesian Logistic Regression}
+%\label{sec:logreg}
+%
+%Let $\bX\in\Re^{N\times D}$ a design matrix\footnote{The matrix $X$ contains features, possibly including a constant non-zero feature if the model includes an intercept parameter.} with rows\footnote{We will assume all the vectors (e.g. $x, \bbeta$) are column vectors.} $\bx_1\transp,\ldots, \bx_N\transp$ in $\Re^D$ and $\y\in\{-1,1\}^N$ the target values of a linear logistic regression model. Let $\D=\{\bX, \y\}$. 
+%Denoting by $\bbeta\in\Re^D$ the vector of parameters, the likelihood is:
+%$$ p(\y|\bbeta, \bX) = \prod_{n=1}^N \sigma(y_n \bx_n\transp \bbeta)$$
+%where  $\sigma:\Re\mapsto [0,1]$ % $\sigma:\Re\mapsto \Re$
+% is the sigmoid $\sigma(\phi):=\frac{1}{1+e^{-\phi}}$.
+%Using a Gaussian prior $\normdist(\bbeta|\mu_0, \Sigma_0)$ we want to approximate the posterior over $\bbeta$:
+%\begin{align}
+%\label{eq:posterior}
+% p(\bbeta|\D) \propto \normdist(\bbeta|\mu_0, \Sigma_0) \prod_{n=1}^N \sigma(y_n \bx_n\transp \bbeta).
+%\end{align}
+% 
+%\section{Polya-Gamma distribution}
+%\label{sec:pg}
+%The Polya-Gamma distribution is a two-parameter univariate distribution.  
+%%that can recover the sigmoid likelihood when marginalized.
+%\citet{polson2013bayesian} showed that the sigmoid function can be represented 
+%as a mixture of Gaussians with respect to a Polya-Gamma distribution.  
+%%The core inequality is:
+%%\begin{align}
+%%\label{eq:pg}
+%%\sigma(\phi) = \frac 12 e^{\frac{\phi}{2}} \int_{0}^{\infty} e^{-\omega\phi^2}\PG(\omega|1,0)d\omega,
+%%\end{align}
+%More precisely,  the sigmoid likelihood can be written as
 %\begin{align}
 %\label{eq:pg}
-%\sigma(\phi) = \frac 12 e^{\frac{\phi}{2}} \int_{0}^{\infty} e^{-\omega\phi^2}\PG(\omega|1,0)d\omega,
+%\sigma(\phi) = \frac{1}{2} e^{\frac{\phi}{2}} \int_{0}^{\infty} e^{-\frac{\omega}{2}\phi^2}\PG(\omega|1,0)d\omega,
 %\end{align}
-More precisely,  the sigmoid likelihood can be written as
-\begin{align}
-\label{eq:pg}
-\sigma(\phi) = \frac{1}{2} e^{\frac{\phi}{2}} \int_{0}^{\infty} e^{-\frac{\omega}{2}\phi^2}\PG(\omega|1,0)d\omega,
-\end{align}
-where $\phi=y\bx\transp\bbeta$ and $\PG(\omega|1,0)$%$\PG(\omega|a,b)$ denotes the %is the pdf of $\PG(a,b)$, 
-the Polya-Gamma distribution with parameters 1 and 0. %\red{scale parameter 1 and shift parameter 0}. 
-{BL: I think the second parameter is the scale parameter ... not sure if the first parameter has an interpretation .. maybe we can call it the shape parameter?}  We refer the reader to \citep{polson2013bayesian} for further details about the Polya Gamma distribution.
-
-%It was recently used to drastically speedup the sampling of Bayesian logistic regression through a data-augmentation~\citep{polson2013bayesian}.
-\citet{polson2013bayesian} recently proposed a data-augmentation strategy for Bayesian logistic regression. The trick is to introduce auxiliary variables $\bomega=(\omega_1,\ldots,\omega_N)$ and use Gibbs sampling on the  augmented space; $\bbeta|\D,\bomega$ is a Gaussian  distribution, whereas $\bomega|\D,\bbeta$ is distributed according to a Polya-Gamma distribution. \citet{polson2013bayesian} present a strategy to sample from $\bomega|\D,\bbeta$, however the Gibbs sampling strategy might suffer from mixing issues. We will discuss a different strategy to compute the posterior in \eqref{eq:posterior}.
-%We will use the same idea to derive our posterior.
-
-
-\section{Bayesian Learning of Logistic Regression}
-\label{sec:blr}
-Plugging in Equation~\eqref{eq:pg} into Equation~\eqref{eq:posterior}, the posterior $p(\bbeta|\mathcal{D})$ is proportional to:
-\begin{align}
-\label{eq:posterior2}
-\normdist(\bbeta|\mu_0, \Sigma_0) e^{\frac{1}{2}\y\transp X \bbeta} \prod_{n=1}^N \int_{0}^{\infty} e^{-\frac{\omega_n}{2} (\bx_n\transp \bbeta)^2} \PG(\omega_n|1,0)d\omega_n
-\end{align}
-where $\bomega :=(\omega_1,\cdots,\omega_N)$ is a vector of independent $\PG(1,0)$ variables. 
-We can consider the augmented model by defining the joint distribution  $p(\bbeta,\bomega|\D)$ to be proportional to the function\footnote{$\gamma(\bbeta,\bomega)$ depends on $\mu_0, \Sigma_0$ and $\D$, but we elide this dependence to keep the notation simple.} $\gamma(\bbeta,\bomega)$ defined as:
-\begin{align}
-\label{eq:joint}
- \normdist(\bbeta|\mu_0, \Sigma_0) e^{\frac{1}{2}\y\transp \bX \bbeta -  \frac{1}{2}\bbeta\transp \bX\transp \diag{\bomega} \bX \bbeta}\prod_n\PG(\omega_n|1,0)
-\end{align}
-Using a change of variable from $\Re^D$ to $\Re^N$ such that $\bz=\bX\bbeta$, the function becomes:
-\begin{align}
-\label{eq:joint2}
-\gamma(\bz,\bomega) :=  \normdist(\bz|\mu_0', \Sigma_0') e^{ \frac{1}{2}\y \transp\bz -  \frac{1}{2}\bz\transp \diag{\bomega} \bz}\prod_n\PG(\omega_n|1,0)
-\end{align}
-where $\mu_0'=X\mu_0$ and $\Sigma_0' = X\Sigma_0 X\transp$. 
-The function $\gamma:\Re^{N}\otimes [0,\infty)^N\mapsto\Re^+$ has no closed-form integral, but it can be split into a product of two families $\gamma_1(\bz,\bomega;\btau)$ and $\gamma_2(\bz,\bomega;\btau)$ whose integrals are tractable.  $\gamma_1(\bz,\bomega;\btau)$  is defined as as
-\begin{align}
-\label{eq:fam1}
-\gamma_1(\bz,\bomega;\btau) := \normdist(\bz|\mu_0', \Sigma_0')  e^{\Psi_{\btau}(\bz,\bomega)}
-\end{align}
-and $\gamma_2(\bz,\bomega;\btau)  $ is defined as:
-\begin{align}
-\label{eq:fam2}
-%\small
-%\gamma_2(\tau)  &:= &
-e^{\frac{1}{2}\y \transp\bz - \frac{1}{2}\bz\transp \diag{\bomega} \bz - \Psi_{\btau}(\bz,w)}\prod_n\PG(\omega_n|1,0)
-\end{align}
-where the pivot function $\Psi_{\btau}:\Re^{N}\otimes [0,\infty)^N\mapsto \Re$ is defined such that the two integrals remain tractable. 
+%where $\phi=y\bx\transp\bbeta$ and $\PG(\omega|1,0)$%$\PG(\omega|a,b)$ denotes the %is the pdf of $\PG(a,b)$, 
+%the Polya-Gamma distribution with parameters 1 and 0. %\red{scale parameter 1 and shift parameter 0}. 
+%{BL: I think the second parameter is the scale parameter ... not sure if the first parameter has an interpretation .. maybe we can call it the shape parameter?}  We refer the reader to \citep{polson2013bayesian} for further details about the Polya Gamma distribution.
 %
-%If we assume $\Sigma_0'$ is diagona and $\mu_0=0$l, we have
+%%It was recently used to drastically speedup the sampling of Bayesian logistic regression through a data-augmentation~\citep{polson2013bayesian}.
+%\citet{polson2013bayesian} recently proposed a data-augmentation strategy for Bayesian logistic regression. The trick is to introduce auxiliary variables $\bomega=(\omega_1,\ldots,\omega_N)$ and use Gibbs sampling on the  augmented space; $\bbeta|\D,\bomega$ is a Gaussian  distribution, whereas $\bomega|\D,\bbeta$ is distributed according to a Polya-Gamma distribution. \citet{polson2013bayesian} present a strategy to sample from $\bomega|\D,\bbeta$, however the Gibbs sampling strategy might suffer from mixing issues. We will discuss a different strategy to compute the posterior in \eqref{eq:posterior}.
+%%We will use the same idea to derive our posterior.
+%
+%
+%\section{Bayesian Learning of Logistic Regression}
+%\label{sec:blr}
+%Plugging in Equation~\eqref{eq:pg} into Equation~\eqref{eq:posterior}, the posterior $p(\bbeta|\mathcal{D})$ is proportional to:
+%\begin{align}
+%\label{eq:posterior2}
+%\normdist(\bbeta|\mu_0, \Sigma_0) e^{\frac{1}{2}\y\transp X \bbeta} \prod_{n=1}^N \int_{0}^{\infty} e^{-\frac{\omega_n}{2} (\bx_n\transp \bbeta)^2} \PG(\omega_n|1,0)d\omega_n
+%\end{align}
+%where $\bomega :=(\omega_1,\cdots,\omega_N)$ is a vector of independent $\PG(1,0)$ variables. 
+%We can consider the augmented model by defining the joint distribution  $p(\bbeta,\bomega|\D)$ to be proportional to the function\footnote{$\gamma(\bbeta,\bomega)$ depends on $\mu_0, \Sigma_0$ and $\D$, but we elide this dependence to keep the notation simple.} $\gamma(\bbeta,\bomega)$ defined as:
+%\begin{align}
+%\label{eq:joint}
+% \normdist(\bbeta|\mu_0, \Sigma_0) e^{\frac{1}{2}\y\transp \bX \bbeta -  \frac{1}{2}\bbeta\transp \bX\transp \diag{\bomega} \bX \bbeta}\prod_n\PG(\omega_n|1,0)
+%\end{align}
+%Using a change of variable from $\Re^D$ to $\Re^N$ such that $\bz=\bX\bbeta$, the function becomes:
+%\begin{align}
+%\label{eq:joint2}
+%\gamma(\bz,\bomega) :=  \normdist(\bz|\mu_0', \Sigma_0') e^{ \frac{1}{2}\y \transp\bz -  \frac{1}{2}\bz\transp \diag{\bomega} \bz}\prod_n\PG(\omega_n|1,0)
+%\end{align}
+%where $\mu_0'=X\mu_0$ and $\Sigma_0' = X\Sigma_0 X\transp$. 
+%The function $\gamma:\Re^{N}\otimes [0,\infty)^N\mapsto\Re^+$ has no closed-form integral, but it can be split into a product of two families $\gamma_1(\bz,\bomega;\btau)$ and $\gamma_2(\bz,\bomega;\btau)$ whose integrals are tractable.  $\gamma_1(\bz,\bomega;\btau)$  is defined as as
+%\begin{align}
+%\label{eq:fam1}
+%\gamma_1(\bz,\bomega;\btau) := \normdist(\bz|\mu_0', \Sigma_0')  e^{\Psi_{\btau}(\bz,\bomega)}
+%\end{align}
+%and $\gamma_2(\bz,\bomega;\btau)  $ is defined as:
 %\begin{align}
 %\label{eq:fam2}
-%\gamma_2(\tau)  &:= &  e^{- \Psi_{\btau}(\bz,w)}\prod_i e^{b_i z_i - \frac{z_i ^2}{2\Sigma_{0ii}}} \PG(\omega_i|1,0)
+%%\small
+%%\gamma_2(\tau)  &:= &
+%e^{\frac{1}{2}\y \transp\bz - \frac{1}{2}\bz\transp \diag{\bomega} \bz - \Psi_{\btau}(\bz,w)}\prod_n\PG(\omega_n|1,0)
 %\end{align}
-
-A possible choice for $\Psi_{\btau}(\bz,\bomega) $is:
-\begin{align}
--\btau_1\transp\bz + \frac 12 \bz\transp\diag{\btau_2}\bz + (\btau_3-1)\transp \bomega - \btau_4\transp \log  \bomega
-\end{align}
-where $\log(\bomega)$ is the logarithm function applied on every component of the vector $\bomega$. The set of variational parameters $\btau=(\btau_1,\btau_2,\btau_3,\btau_4)$ is defined on the space \red{$\Re^N \times \Re^{+N} \times \Re^{+N} \times \Re^{+N}$}. \red{Double check domain of $\btau$.} \\
-
-The integrals are given by:
-\begin{align}{
-\integral_1(\btau)&=\int \gamma_1(\bz,\bomega;\btau) d\bz d\bomega
-\\ &= \int \normdist(\bz|\mu_0', \Sigma_0')  e^{\Psi_{\btau}(\bz,\bomega)} d\bz d\bomega
-\\ &= \underbrace{\int \normdist(\bz|\mu_0', \Sigma_0') e^{-\btau_1\transp\bz + \frac 12 \bz\transp\diag{\btau_2}\bz} d\bz}_{\integral_{11}(\btau)}
-%\\ & \qquad\times
-  \underbrace{\int  e^{(\btau_3-1)\transp \bomega - \btau_4\transp \log  \bomega} d\bomega}_{\integral_{12}(\btau)}
-}\end{align}
-$\integral_{11}(\btau)$ is just the normalizing constant of a multivariate Gaussian distribution. 
-\red{(BL: The computational complexity might be $N^3$ if naively implemented. Would this be prohibitive? We can invert $\Sigma_0$ just once and use the trick in \url{http://math.stackexchange.com/questions/17776/inverse-of-the-sum-of-matrices} to compute $(\Sigma_0^{-1} - \diag{\btau_2})^{-1}$ in $O(N^2)$. May need to invert sign of $\btau_2$, otherwise integral might diverge.)}
-$\integral_{12}(\btau)$ is just the product of normalizing constants of one-dimensional gamma distributions. Hence $\integral_1(\btau)$ can be computed analytically.
-
-\begin{align}{
-\integral_2(\btau)&=\int \gamma_2(\bz,\bomega;\btau) d\bz d\bomega
-\\ &= \int e^{\frac{1}{2}\y \transp\bz - \frac{1}{2}\bz\transp \diag{\bomega} \bz - \Psi_{\btau}(\bz,\bomega)}\prod_n\PG(\omega_n|1,0) d\bz d\bomega\nonumber
-\\ &= \prod_n \integral_{2n}(\btau)
-}\end{align}
-where,
-
-\begin{align}{
-%&
- \integral_{2n}(\btau) 
-%\\ 
-& = \int  e^{\frac{1}{2}y_n z_n -\frac{\omega_n}{2} z_n^2 - \Psi_{\btau}(z_n,\omega_n)} \PG(\omega_n|1,0) 
-dz_n\omega_n
-\\ & = \int  e^{z_n(\frac{y_n}{2}+\tau_{1n}) -\frac{z_n^2}{2}(\omega_n+\tau_{2n})  -(\tau_{3n}-1)\omega_n+\tau_{4n}\log\omega_n} \PG(\omega_n|1,0) 
-dz_n\omega_n
-}\end{align}
-
-Integrating out $z_n$ analytically, we obtain
-
-\begin{align}{
-%&
- \integral_{2n}(\btau) 
-%\\
-& = \int  \sqrt{\frac{2\pi}{\omega_n+\tau_{2n}}}e^{\frac{(y_n/2+\tau_{1n})^2}{2(\omega_n+\tau_{2n})}} \omega_n^{\tau_{4n}} \underbrace{e^{-(\tau_{3n}-1)\omega_n} \PG(\omega_n|1,0)}_{\PG(\omega_n|1,c_n)} 
-d\omega_n
-}\end{align}
-The term in the under brace is an unnormalized $\PG(1,c_n)$ density, which can be efficiently sampled from.
-
-It is optimized so that:
-\begin{align}
-\red{\bar\integral(\btau) = \frac{1}{\alpha_1} \log \int \gamma_1(\bz,\bomega;\tau) d\bz d\bomega  + \frac{1}{\alpha_2} \log \int \gamma_2(\bz,\bomega;\alpha_2\tau) d\bz d\bomega}
-\end{align}
-\red{BL: I think the above is incorrect. The correct expr. is}
-\begin{align}
-\bar\integral(\btau) = \frac{1}{\alpha_1} \log \int \gamma_1(\bz,\bomega;\tau)^{\alpha_1} d\bz d\bomega  + \frac{1}{\alpha_2} \log \int \gamma_2(\bz,\bomega;\tau)^{\alpha_2} d\bz d\bomega
-\end{align}
-is minimized. Indeed, according to Theorem~1, it is an upper bound to $\integral := \log\int \gamma(\bz,\bomega) d\bz d\bomega$.
-
+%where the pivot function $\Psi_{\btau}:\Re^{N}\otimes [0,\infty)^N\mapsto \Re$ is defined such that the two integrals remain tractable. 
+%%
+%%If we assume $\Sigma_0'$ is diagona and $\mu_0=0$l, we have
+%%\begin{align}
+%%\label{eq:fam2}
+%%\gamma_2(\tau)  &:= &  e^{- \Psi_{\btau}(\bz,w)}\prod_i e^{b_i z_i - \frac{z_i ^2}{2\Sigma_{0ii}}} \PG(\omega_i|1,0)
+%%\end{align}
 %
-%\section{Normal-Inverse Wishart Distribution}
-%The Normal-Inverse Wishart Distribution is a joint distribution over vectors and positive definite matrices. Its pdf $ \normdist(\x|\mu, \Lambda^{-1}) \mathcal{W}(\Lambda|A,\nu)$ is the product of a normal pdf and the inverse Wishart pdf and is proportional to: 
+%A possible choice for $\Psi_{\btau}(\bz,\bomega) $is:
 %\begin{align}
-%|\Lambda|^{(\nu-1)/2} e^{-\frac 12 \x\transp \Lambda \x + \mu\transp\x -\frac 12 \mu\Lambda\mu - \trace (A\Lambda)}
+%-\btau_1\transp\bz + \frac 12 \bz\transp\diag{\btau_2}\bz + (\btau_3-1)\transp \bomega - \btau_4\transp \log  \bomega
 %\end{align}
-%In this paper, we consider 
+%where $\log(\bomega)$ is the logarithm function applied on every component of the vector $\bomega$. The set of variational parameters $\btau=(\btau_1,\btau_2,\btau_3,\btau_4)$ is defined on the space \red{$\Re^N \times \Re^{+N} \times \Re^{+N} \times \Re^{+N}$}. \red{Double check domain of $\btau$.} \\
 %
-
-
-
-
-\end{document} 
-
-
-
-
-{\small
- \begin{eqnarray}  
-  \label{eq:obj-modified}  
-&&	  a +  \sum_i b_i (\tau_{2i}\sqrt{\alpha_1/\tau_{1i}}-\eta_i) +  c_i(\tau_{2i}\sqrt{\alpha_1/\tau_{1i}}-\eta_i)^2
-	 \nonumber\\&&
-	 - \frac 1{2\alpha_1} \log|T|   - \frac 1{2\alpha_2} \log|A-T|  + \kappa(T)
-	 \nonumber
-	 \\&&
-	 + \frac{1}{2}\left ((b - \btau_2)\transp  (A-T)^{-1} (b - \btau_2) +\sum_i \tau_{2i}^2 /T_{ii}\right)
-	 \nonumber
-	 	 \\&&
-	+ \mu \D_A(\diag{\btau_1},\diag{\btau_1'})
-\end{eqnarray}
-}
-
-{\small
- \begin{eqnarray}  
-  \label{eq:obj-modified2}  
-&&	  a +  \sum_i b_i (\tau_{2i}\sqrt{\alpha_1/\tau_{1i}}-\eta_i) +  c_i(\tau_{2i}\sqrt{\alpha_1/\tau_{1i}}-\eta_i)^2
-	 \nonumber\\&&
-	 - \frac 1{2\alpha_1} \log|T|   - \frac 1{2\alpha_2} \log|T'|   + \kappa(T)
-	 \nonumber
-	 \\&&
-	 + \frac{1}{2}\left ((b - \btau_2)\transp  T' (b - \btau_2) +\sum_i \tau_{2i}^2 T_{ii}\right)
-	 \nonumber
-	 	 \\&&
-	+\frac{\mu}{2} \D_A(T,T')
-\end{eqnarray}
-}
-where:
-{\small
-$$\D_A(T,T') := \trace\{(A-T')T\} - \log|(A-T')T| - n
-\enspace.$$
-}
-To obtain tractable minimization, we split Equation~\eqref{eq:obj-ub} into two parts $\Gamma_1$ and $\Gamma_2$, up to a constant 
-factor that does not depend on $\btau_1$:
-{\small
- \begin{eqnarray}  
-  \label{eq:obj-split}  
-\Gamma_1(\tau_1)&:=&	
-  \sum_i (b_i-2c_i\eta_i) \tau_{2i}\sqrt{\alpha_1/\tau_{1i}} +  c_i\tau_{2i}^2 \alpha_1/\tau_{1i}
-	\nonumber \\&&
-	 - \frac 1{2\alpha_1} \log|\diag{\btau_1}|  + \frac 12 \sum_i \tau_{2i}^2/\tau_{1i}
-	 \\
-\Gamma_2(\tau_1)&:=&	
-	 \frac{1}{2}\left ((b - \btau_2)\transp  (A-\diag{\btau_1})^{-1} (b - \btau_2) \right)
-	 \nonumber\\&&
-	  - \frac 1{2\alpha_2} \log|A-\diag{\btau_1}|  
-\end{eqnarray}
-}
-Introducing $n\times n$ matrices $\T$ and $\T'$ such that $\T_{ii} = \tau_{1i}$, $i=1,\cdots,n$
-as well at the function $\kappa(\T)=0$ for any $n\times n$ diagonal matrix $M$, and $\kappa(\T)=\infty$ otherwise, we define
-the augmeted Lagrangian function as:
-{\small
- \begin{eqnarray}  
-  \label{eq:obj-split2-mtx1}  
-\Gamma_1'(\T)&:=&	
-  \sum_i (b_i-2c_i\eta_i) \tau_{2i}\sqrt{\alpha_1/\T_{ii}} +  c_i\tau_{2i}^2 \alpha_1/\T_{ii}
-	\nonumber \\&&
-	 -\frac 1{2\alpha_1} \log|{\T}|  + \frac 12 \sum_i \tau_{2i}^2/\T_{ii} + \kappa(\T)
-	\nonumber \\&&	 
-	 + \T-\T' + \frac 12 \mu \|\T-\T'\|_F^2
-	 \\
-  \label{eq:obj-split2-mtx2}  
-\Gamma_2'(\T')&:=&	
-	 \frac{1}{2}\left ((b - \btau_2)\transp  (A-{\T'})^{-1} (b - \btau_2) \right)
-	 \nonumber\\&&
-	  - \frac 1{2\alpha_2} \log|A-{\T'}|  
-	\nonumber \\&&
-	  + \T'-\T + \frac 12 \mu \|\T'-\T\|_F^2
-\end{eqnarray}
-}
-where $\mu$ is the augmented Lagrangian smoothing parameter.
-Equation~\eqref{eq:obj-split2-mtx1}  can be minimized with respect to $\T$ 
-as it corresponds to unidimensional minimizations of convex functions 
-with respect to $\T_{ii}$ and $\T_{ij}=0$ for $i\neq j$. 
-Using the change of variable $S\leftarrow A-\T'$, Equation~\eqref{eq:obj-split2-mtx2}   
-becomes:
-{\small
- \begin{eqnarray}  
-  \label{eq:obj-split2-mtx2-new}  
-\Gamma_2'(S)&:=&	
-	 \frac{1}{2}\left ((b - \btau_2)\transp  S^{-1} (b - \btau_2) \right)
-	 \nonumber\\&&
-	  - \frac 1{2\alpha_2} \log|S|  
-	  	  + A-S	  -\Sigma 
-	\nonumber \\&&
-	+ \frac 12 \mu \|A-S-\Sigma\|_F^2
-	  +C''
-\end{eqnarray}
-}
-which is simple to minimize...
-
+%The integrals are given by:
+%\begin{align}{
+%\integral_1(\btau)&=\int \gamma_1(\bz,\bomega;\btau) d\bz d\bomega
+%\\ &= \int \normdist(\bz|\mu_0', \Sigma_0')  e^{\Psi_{\btau}(\bz,\bomega)} d\bz d\bomega
+%\\ &= \underbrace{\int \normdist(\bz|\mu_0', \Sigma_0') e^{-\btau_1\transp\bz + \frac 12 \bz\transp\diag{\btau_2}\bz} d\bz}_{\integral_{11}(\btau)}
+%%\\ & \qquad\times
+%  \underbrace{\int  e^{(\btau_3-1)\transp \bomega - \btau_4\transp \log  \bomega} d\bomega}_{\integral_{12}(\btau)}
+%}\end{align}
+%$\integral_{11}(\btau)$ is just the normalizing constant of a multivariate Gaussian distribution. 
+%\red{(BL: The computational complexity might be $N^3$ if naively implemented. Would this be prohibitive? We can invert $\Sigma_0$ just once and use the trick in \url{http://math.stackexchange.com/questions/17776/inverse-of-the-sum-of-matrices} to compute $(\Sigma_0^{-1} - \diag{\btau_2})^{-1}$ in $O(N^2)$. May need to invert sign of $\btau_2$, otherwise integral might diverge.)}
+%$\integral_{12}(\btau)$ is just the product of normalizing constants of one-dimensional gamma distributions. Hence $\integral_1(\btau)$ can be computed analytically.
+%
+%\begin{align}{
+%\integral_2(\btau)&=\int \gamma_2(\bz,\bomega;\btau) d\bz d\bomega
+%\\ &= \int e^{\frac{1}{2}\y \transp\bz - \frac{1}{2}\bz\transp \diag{\bomega} \bz - \Psi_{\btau}(\bz,\bomega)}\prod_n\PG(\omega_n|1,0) d\bz d\bomega\nonumber
+%\\ &= \prod_n \integral_{2n}(\btau)
+%}\end{align}
+%where,
+%
+%\begin{align}{
+%%&
+% \integral_{2n}(\btau) 
+%%\\ 
+%& = \int  e^{\frac{1}{2}y_n z_n -\frac{\omega_n}{2} z_n^2 - \Psi_{\btau}(z_n,\omega_n)} \PG(\omega_n|1,0) 
+%dz_n\omega_n
+%\\ & = \int  e^{z_n(\frac{y_n}{2}+\tau_{1n}) -\frac{z_n^2}{2}(\omega_n+\tau_{2n})  -(\tau_{3n}-1)\omega_n+\tau_{4n}\log\omega_n} \PG(\omega_n|1,0) 
+%dz_n\omega_n
+%}\end{align}
+%
+%Integrating out $z_n$ analytically, we obtain
+%
+%\begin{align}{
+%%&
+% \integral_{2n}(\btau) 
+%%\\
+%& = \int  \sqrt{\frac{2\pi}{\omega_n+\tau_{2n}}}e^{\frac{(y_n/2+\tau_{1n})^2}{2(\omega_n+\tau_{2n})}} \omega_n^{\tau_{4n}} \underbrace{e^{-(\tau_{3n}-1)\omega_n} \PG(\omega_n|1,0)}_{\PG(\omega_n|1,c_n)} 
+%d\omega_n
+%}\end{align}
+%The term in the under brace is an unnormalized $\PG(1,c_n)$ density, which can be efficiently sampled from.
+%
+%It is optimized so that:
+%\begin{align}
+%\red{\bar\integral(\btau) = \frac{1}{\alpha_1} \log \int \gamma_1(\bz,\bomega;\tau) d\bz d\bomega  + \frac{1}{\alpha_2} \log \int \gamma_2(\bz,\bomega;\alpha_2\tau) d\bz d\bomega}
+%\end{align}
+%\red{BL: I think the above is incorrect. The correct expr. is}
+%\begin{align}
+%\bar\integral(\btau) = \frac{1}{\alpha_1} \log \int \gamma_1(\bz,\bomega;\tau)^{\alpha_1} d\bz d\bomega  + \frac{1}{\alpha_2} \log \int \gamma_2(\bz,\bomega;\tau)^{\alpha_2} d\bz d\bomega
+%\end{align}
+%is minimized. Indeed, according to Theorem~1, it is an upper bound to $\integral := \log\int \gamma(\bz,\bomega) d\bz d\bomega$.
+%
+%%
+%%\section{Normal-Inverse Wishart Distribution}
+%%The Normal-Inverse Wishart Distribution is a joint distribution over vectors and positive definite matrices. Its pdf $ \normdist(\x|\mu, \Lambda^{-1}) \mathcal{W}(\Lambda|A,\nu)$ is the product of a normal pdf and the inverse Wishart pdf and is proportional to: 
+%%\begin{align}
+%%|\Lambda|^{(\nu-1)/2} e^{-\frac 12 \x\transp \Lambda \x + \mu\transp\x -\frac 12 \mu\Lambda\mu - \trace (A\Lambda)}
+%%\end{align}
+%%In this paper, we consider 
+%%
+%
+%
+%
+%
+%\end{document} 
+%
+%
+%
+%
+%{\small
+% \begin{eqnarray}  
+%  \label{eq:obj-modified}  
+%&&	  a +  \sum_i b_i (\tau_{2i}\sqrt{\alpha_1/\tau_{1i}}-\eta_i) +  c_i(\tau_{2i}\sqrt{\alpha_1/\tau_{1i}}-\eta_i)^2
+%	 \nonumber\\&&
+%	 - \frac 1{2\alpha_1} \log|T|   - \frac 1{2\alpha_2} \log|A-T|  + \kappa(T)
+%	 \nonumber
+%	 \\&&
+%	 + \frac{1}{2}\left ((b - \btau_2)\transp  (A-T)^{-1} (b - \btau_2) +\sum_i \tau_{2i}^2 /T_{ii}\right)
+%	 \nonumber
+%	 	 \\&&
+%	+ \mu \D_A(\diag{\btau_1},\diag{\btau_1'})
+%\end{eqnarray}
+%}
+%
+%{\small
+% \begin{eqnarray}  
+%  \label{eq:obj-modified2}  
+%&&	  a +  \sum_i b_i (\tau_{2i}\sqrt{\alpha_1/\tau_{1i}}-\eta_i) +  c_i(\tau_{2i}\sqrt{\alpha_1/\tau_{1i}}-\eta_i)^2
+%	 \nonumber\\&&
+%	 - \frac 1{2\alpha_1} \log|T|   - \frac 1{2\alpha_2} \log|T'|   + \kappa(T)
+%	 \nonumber
+%	 \\&&
+%	 + \frac{1}{2}\left ((b - \btau_2)\transp  T' (b - \btau_2) +\sum_i \tau_{2i}^2 T_{ii}\right)
+%	 \nonumber
+%	 	 \\&&
+%	+\frac{\mu}{2} \D_A(T,T')
+%\end{eqnarray}
+%}
+%where:
+%{\small
+%$$\D_A(T,T') := \trace\{(A-T')T\} - \log|(A-T')T| - n
+%\enspace.$$
+%}
+%To obtain tractable minimization, we split Equation~\eqref{eq:obj-ub} into two parts $\Gamma_1$ and $\Gamma_2$, up to a constant 
+%factor that does not depend on $\btau_1$:
+%{\small
+% \begin{eqnarray}  
+%  \label{eq:obj-split}  
+%\Gamma_1(\tau_1)&:=&	
+%  \sum_i (b_i-2c_i\eta_i) \tau_{2i}\sqrt{\alpha_1/\tau_{1i}} +  c_i\tau_{2i}^2 \alpha_1/\tau_{1i}
+%	\nonumber \\&&
+%	 - \frac 1{2\alpha_1} \log|\diag{\btau_1}|  + \frac 12 \sum_i \tau_{2i}^2/\tau_{1i}
+%	 \\
+%\Gamma_2(\tau_1)&:=&	
+%	 \frac{1}{2}\left ((b - \btau_2)\transp  (A-\diag{\btau_1})^{-1} (b - \btau_2) \right)
+%	 \nonumber\\&&
+%	  - \frac 1{2\alpha_2} \log|A-\diag{\btau_1}|  
+%\end{eqnarray}
+%}
+%Introducing $n\times n$ matrices $\T$ and $\T'$ such that $\T_{ii} = \tau_{1i}$, $i=1,\cdots,n$
+%as well at the function $\kappa(\T)=0$ for any $n\times n$ diagonal matrix $M$, and $\kappa(\T)=\infty$ otherwise, we define
+%the augmeted Lagrangian function as:
+%{\small
+% \begin{eqnarray}  
+%  \label{eq:obj-split2-mtx1}  
+%\Gamma_1'(\T)&:=&	
+%  \sum_i (b_i-2c_i\eta_i) \tau_{2i}\sqrt{\alpha_1/\T_{ii}} +  c_i\tau_{2i}^2 \alpha_1/\T_{ii}
+%	\nonumber \\&&
+%	 -\frac 1{2\alpha_1} \log|{\T}|  + \frac 12 \sum_i \tau_{2i}^2/\T_{ii} + \kappa(\T)
+%	\nonumber \\&&	 
+%	 + \T-\T' + \frac 12 \mu \|\T-\T'\|_F^2
+%	 \\
+%  \label{eq:obj-split2-mtx2}  
+%\Gamma_2'(\T')&:=&	
+%	 \frac{1}{2}\left ((b - \btau_2)\transp  (A-{\T'})^{-1} (b - \btau_2) \right)
+%	 \nonumber\\&&
+%	  - \frac 1{2\alpha_2} \log|A-{\T'}|  
+%	\nonumber \\&&
+%	  + \T'-\T + \frac 12 \mu \|\T'-\T\|_F^2
+%\end{eqnarray}
+%}
+%where $\mu$ is the augmented Lagrangian smoothing parameter.
+%Equation~\eqref{eq:obj-split2-mtx1}  can be minimized with respect to $\T$ 
+%as it corresponds to unidimensional minimizations of convex functions 
+%with respect to $\T_{ii}$ and $\T_{ij}=0$ for $i\neq j$. 
+%Using the change of variable $S\leftarrow A-\T'$, Equation~\eqref{eq:obj-split2-mtx2}   
+%becomes:
+%{\small
+% \begin{eqnarray}  
+%  \label{eq:obj-split2-mtx2-new}  
+%\Gamma_2'(S)&:=&	
+%	 \frac{1}{2}\left ((b - \btau_2)\transp  S^{-1} (b - \btau_2) \right)
+%	 \nonumber\\&&
+%	  - \frac 1{2\alpha_2} \log|S|  
+%	  	  + A-S	  -\Sigma 
+%	\nonumber \\&&
+%	+ \frac 12 \mu \|A-S-\Sigma\|_F^2
+%	  +C''
+%\end{eqnarray}
+%}
+%which is simple to minimize...
+%
