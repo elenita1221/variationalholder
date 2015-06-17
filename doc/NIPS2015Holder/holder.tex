@@ -23,6 +23,7 @@
 
 %\usepackage{hyperref}
 \usepackage[colorlinks,citecolor=blue,urlcolor=blue,linkcolor=blue]{hyperref}
+%\usepackage{url}
 
 % Packages hyperref and algorithmic misbehave sometimes.  We can fix
 % this with the following command.
@@ -150,52 +151,52 @@
 % puts 3 of 4 authors names on the first line, and the last on the second
 % line, try using \AND instead of \And before the third author name.
 %
-\author{
-David S.~Hippocampus\thanks{ Use footnote for providing further information
-about author (webpage, alternative address)---\emph{not} for acknowledging
-funding agencies.} \\
-Department of Computer Science\\
-Cranberry-Lemon University\\
-Pittsburgh, PA 15213 \\
-\texttt{hippo@cs.cranberry-lemon.edu} \\
-\And
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email} \\
-\AND
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email} \\
-\And
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email} \\
-\And
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email} \\
-(if needed)\\
-}
-
-%\author{ {\bf Guillaume Bouchard} \\
-%Xerox Research Centre Europe\\
-%\href{guillaume.bouchard@xerox.com}{\nolinkurl{guillaume.bouchard@xerox.com}} \\
+%\author{
+%David S.~Hippocampus\thanks{ Use footnote for providing further information
+%about author (webpage, alternative address)---\emph{not} for acknowledging
+%funding agencies.} \\
+%Department of Computer Science\\
+%Cranberry-Lemon University\\
+%Pittsburgh, PA 15213 \\
+%\texttt{hippo@cs.cranberry-lemon.edu} \\
 %\And
-%{\bf Balaji Lakshminarayanan}  \\
-%Gatsby Unit, University College London          \\
-%\href{balaji@gatsby.ucl.ac.uk}{\nolinkurl{balaji@gatsby.ucl.ac.uk}}
+%Coauthor \\
+%Affiliation \\
+%Address \\
+%\texttt{email} \\
+%\AND
+%Coauthor \\
+%Affiliation \\
+%Address \\
+%\texttt{email} \\
+%\And
+%Coauthor \\
+%Affiliation \\
+%Address \\
+%\texttt{email} \\
+%\And
+%Coauthor \\
+%Affiliation \\
+%Address \\
+%\texttt{email} \\
+%(if needed)\\
 %}
+
+\author{ { Guillaume Bouchard} \\
+Xerox Research Centre Europe\\
+\href{guillaume.bouchard@xerox.com}{\nolinkurl{guillaume.bouchard@xerox.com}} \\
+\And
+{\bf Balaji Lakshminarayanan}  \\
+Gatsby Unit, University College London          \\
+\href{balaji@gatsby.ucl.ac.uk}{\nolinkurl{balaji@gatsby.ucl.ac.uk}}
+}
 
 
 
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
 
-%\nipsfinalcopy % Uncomment for camera-ready version
+\nipsfinalcopy % Uncomment for camera-ready version
 
 \begin{document}
 
@@ -850,7 +851,7 @@ gradient descent technique to find the optimal variational parameters.
 
 %%%
 
-\begin{table}[h]
+\begin{table}[b]%[h]
 \begin{center}
 \resizebox{0.5\textwidth}{!}{%
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -934,7 +935,7 @@ $\kappa$ & $n$ & VB vs EP & VH vs EP & VB vs VH \\
 \section{Experiments}  % on higher dimensional truncated Gaussian
 
 To undestand the properties of the VH bound, we compared its properties with existing deterministic integration. integration methods in high dimension. We considered the ground-truth to be the method of Alan Genz~\citep{genz2009computation}
-which is based on a sofisticated technique of pseudo-random number generation. The main interest is that it can give an error estimate of the error, so that we can evaluate precisely the validity of various techniques. We used the matlab code provided by the author.
+which is based on a sophisticated technique of pseudo-random number generation. The main interest is that it can give an error estimate of the error, so that we can evaluate precisely the validity of various techniques. We used the matlab code provided by the author.
 Another efficient technique for integration of truncated Gaussians is based on the use of Expectation-Propagation (EP), as
 described by \citet{Cunningham-et-al-Gaussian-EP2012}. In this case as well, a matlab code is provided by the authors. 
 Finally, we used implemented the VB version described above to obtain a lower bound to the true integral. 
@@ -1165,7 +1166,7 @@ one factor per possible spanning tree.
 
 
 
-\end{document}
+%\end{document}
 
 \renewcommand{\f}{f}
 \renewcommand{\g}{g}
